@@ -157,6 +157,10 @@ class MotorController:
 		self.message.append(speed)
 		self.serialport.write(self.message)
 
+	def setVelocity(self, velocity):
+		setVelocityM0(velocity)
+		setVelocityM1(velocity)
+
 	def setVelocityM0(self, velocity):
 
 		if velocity > 0:
@@ -170,4 +174,6 @@ class MotorController:
 			self.forwardM1(velocity)
 		elif velocity < 0:
 			self.reverseM0(velocity)
+
+
 
