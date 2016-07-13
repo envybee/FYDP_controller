@@ -40,7 +40,7 @@ M1_GET_SPEED = 0x93
 #QIK_CONFIG_SHUT_DOWN_MOTORS_ON_ERROR =  2
 #QIK_CONFIG_SERIAL_TIMEOUT =  3
 
-class MotorController:
+class MCInterface:
 
 	def __init__(self,**kwargs):
 

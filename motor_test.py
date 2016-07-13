@@ -1,6 +1,6 @@
 import serial
 import time
-import MotorController
+from MotorController import MCInterface
 
 '''
 s = serialport = serial.Serial("/dev/ttyAMA0", 9600, timeout=0.5)
@@ -13,7 +13,7 @@ time.sleep(1)
 s.write( chr(0xAA) + chr(0x09) + chr(0x0A) + chr(0) )      # motor 0 stop
 '''
 
-mc = MotorController()
+mc = MCInterface()
 mc.forwardM0(50)
 
 time.sleep(1)
