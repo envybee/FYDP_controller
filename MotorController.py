@@ -71,7 +71,7 @@ class MotorController:
 		if speed < 0:
 			speed = 0
 
-		if !self.is8bit:
+		if not self.is8bit:
 			if speed > 255:
 				speed = 255
 
@@ -94,7 +94,7 @@ class MotorController:
 		if speed < 0:
 			speed = 0
 
-		if !self.is8bit:
+		if not self.is8bit:
 			if speed > 255:
 				speed = 255
 
@@ -118,7 +118,7 @@ class MotorController:
 		if speed < 0:
 			speed = 0
 
-		if !self.is8bit:
+		if not self.is8bit:
 			if speed > 255:
 				speed = 255
 
@@ -141,7 +141,7 @@ class MotorController:
 		if speed < 0:
 			speed = 0
 
-		if !self.is8bit:
+		if not self.is8bit:
 			if speed > 255:
 				speed = 255
 
