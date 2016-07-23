@@ -2,7 +2,7 @@ import serial
 import time
 from MotorController import MCInterface
 import threading
-
+from motion_detector_camshift import newData
 global dataBuffer
 
 #Constants - Ki, Kd, Kp
@@ -26,8 +26,12 @@ class controllerLoop(threading.Thread):
     def run(self):
         
         while True:
-            
-            (currVelocity, currTime) = getData()
+            if(newData is None):
+                continue
+            (currVelocity, currTime) = newData
+            currVelocity = currVelocity*127
+            newData = None
+            currVelocity = int(currVelocity*63)
             #Record the time
             if(self.prevTime is None):
                 prevTime = currTime
@@ -49,5 +53,5 @@ class controllerLoop(threading.Thread):
 
             currVelocity = Kp * error + Kd * diffError + Ki * intError
             
-            self.mc.forwardM0(curVelocity)
-            self.mc.forwardM1(curVelocity)
+            self.mc.forwardM0(currVelocity)
+            self.mc.forwardM1(currVelocity)
