@@ -23,7 +23,7 @@ class controllerLoop(threading.Thread):
                 continue
             (currVelocity, currTime) = self.dataQueue.get()
 
-            print("%.2f" % round(currVelocity,2))
+            print("%.2f" % round(currVelocity,2), "Queue: " + str(self.dataQueue.queue))
             currVelocity = int(currVelocity*127)
             #Record the time
             if(self.prevTime is None):
