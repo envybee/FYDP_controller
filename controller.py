@@ -2,10 +2,9 @@ import serial
 import time
 from MotorController import MCInterface
 import threading
-from motion_detector_camshift import newData
 
 class controllerLoop(threading.Thread):
-    def __init__(self, threadID,  mc):
+    def __init__(self, threadID,  mc, q):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.mc = mc
@@ -15,14 +14,14 @@ class controllerLoop(threading.Thread):
         self.Kp = 10
         self.Ki = 10
         self.Kd = 10
+        self.dataQueue = q
 
     def run(self):
         
         while True:
-            if(newData is None):
+            if(self.dataQueue.empty()):
                 continue
-            (currVelocity, currTime) = newData
-            newData = None
+            (currVelocity, currTime) = self.dataQueue.get()
 
             print("%.2f" % round(currVelocity,2))
             currVelocity = int(currVelocity*127)
