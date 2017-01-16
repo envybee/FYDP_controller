@@ -49,6 +49,7 @@ class MCInterface:
 
 		#Set the serial port and baud rate, while also clearing the input buffer
 		self.serialport = serial.Serial(port, baudRate)
+		time.sleep(1)
 		self.serialport.flushInput()
 
 		self.message = bytearray()
@@ -58,20 +59,16 @@ class MCInterface:
 		self.establishConnection()
 
 	def establishConnection(self):
-
 		del self.message[:]
-
 		self.message.append(CONTROLLER_AUTODETECT)
 		self.serialport.write(self.message)
 
 	def forwardM0(self, speed):
-		
 		del self.message[:]
-
 		if speed < 0:
 			speed = 0
 
-		if not self.is8bit:
+		if self.is8bit:
 			if speed > 255:
 				speed = 255
 
@@ -83,7 +80,6 @@ class MCInterface:
 				speed = 127
 
 			self.message.append(M0_MOVE_FORWARD_8BIT)		
-
 		self.message.append(speed)
 		self.serialport.write(self.message)
 
@@ -94,7 +90,7 @@ class MCInterface:
 		if speed < 0:
 			speed = 0
 
-		if not self.is8bit:
+		if self.is8bit:
 			if speed > 255:
 				speed = 255
 
@@ -118,7 +114,7 @@ class MCInterface:
 		if speed < 0:
 			speed = 0
 
-		if not self.is8bit:
+		if self.is8bit:
 			if speed > 255:
 				speed = 255
 
@@ -141,7 +137,7 @@ class MCInterface:
 		if speed < 0:
 			speed = 0
 
-		if not self.is8bit:
+		if self.is8bit:
 			if speed > 255:
 				speed = 255
 
