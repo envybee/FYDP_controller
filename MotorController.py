@@ -154,8 +154,8 @@ class MCInterface:
 		self.serialport.write(self.message)
 
 	def setVelocity(self, velocity):
-		setVelocityM0(velocity)
-		setVelocityM1(velocity)
+		self.setVelocityM0(velocity)
+		self.setVelocityM1(velocity)
 
 	def setVelocityM0(self, velocity):
 

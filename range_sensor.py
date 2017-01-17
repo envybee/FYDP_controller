@@ -4,16 +4,14 @@ import Queue
 import signal
 import sys
 import logging
-from controller import controllerLoop
-from MotorController import MCInterface
+from controller import ControllerLoop
 
 logger = logging.getLogger(__name__)
 
 dataQueue = Queue.Queue()
 newData = None
 
-mc = MCInterface()
-cL = controllerLoop(1, mc, dataQueue)
+cL = ControllerLoop(1, dataQueue, logger)
 
 def sigint_handler(signum, frame):
     cL.kill_received = True
@@ -23,19 +21,19 @@ def sigint_handler(signum, frame):
 
 GPIO.setmode(GPIO.BCM)
 
-TRIG = 23 
+TRIG = 23
 ECHO = 24
 
-print "Starting Control Loop"
+logger.info("Starting Control Loop")
 cL.start()
 
-print "Distance Measurement In Progress"
+logger.info("Distance Measurement In Progress")
 
 GPIO.setup(TRIG,GPIO.OUT)
 GPIO.setup(ECHO,GPIO.IN)
 
 GPIO.output(TRIG, False)
-print "Waiting For Sensor To Settle"
+logger.info("Waiting For Sensor To Settle")
 
 count = 0
 
@@ -82,7 +80,7 @@ while True:
 
 	previous_time = current_time
 
-	print "Iteration: ",count,"Distance diff:",distance_diff," cm","  Time Delta:",time_diff," sec"
+	logger.info("Iteration: ",count,"Distance diff:",distance_diff," cm","  Time Delta:",time_diff," sec")
 	time.sleep(0.05)
 
 cL.kill_received = True

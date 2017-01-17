@@ -3,11 +3,21 @@ import time
 from MotorController import MCInterface
 import threading
 
-class controllerLoop(threading.Thread):
-    def __init__(self, threadID,  mc, q):
+# Store necessary values to perform sliding window/Kalman filtering and other filtering
+class InputFilter():
+    def __init__(self):
+        pass
+
+    def filter(self):
+        pass
+
+class ControllerLoop(threading.Thread):
+    def __init__(self, threadID, q, logger):
+        self.logger = logger
+
         threading.Thread.__init__(self)
         self.threadID = threadID
-        self.mc = mc
+        self.mc = MCInterface()
         #Initialize
         self.prevTime = None
 
@@ -34,7 +44,7 @@ class controllerLoop(threading.Thread):
                 continue
             (error, currTime) = self.dataQueue.get()
 
-            print("%.2f" % round(error,2), "Queue: " + str(self.dataQueue.queue))
+            self.logger.debug("%.2f" % round(error,2), "Queue: " + str(self.dataQueue.queue))
             
             #Record the time
             if(self.prevTime is None):
