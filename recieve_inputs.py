@@ -10,7 +10,7 @@ class Inputs(threading.Thread):
         threading.Thread.__init__(self)
         self.threadID = threadID
 
-    def get_data():
+    def get_data(self):
         key = ord(getch())
         if key == 224: #Special keys (arrows, f keys, ins, del, etc.)
             key = ord(getch())
