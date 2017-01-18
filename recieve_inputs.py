@@ -1,6 +1,6 @@
 from MotorController import MCInterface
 import threading
-from msvcrt import getch
+import curses
 
 CONST_VELOCITY = 5
 
@@ -14,20 +14,21 @@ class Inputs(threading.Thread):
         threading.Thread.__init__(self)
         self.threadID = threadID
 
-    def get_data(self):
-        key = ord(getch())
-        if key == 224: #Special keys (arrows, f keys, ins, del, etc.)
-            key = ord(getch())
-            if key == 80: #Down arrow
-                self.reverse()
-            elif key == 72: #Up arrow
-                self.forward()
-            elif key == 75: #Left turn
-                self.turn_left()
-            elif key == 77:
-                self.turn_right() #Right Arrow
+        # get the curses screen window
+        self.screen = curses.initscr()
 
-        return key
+        # turn off input echoing
+        curses.noecho()
+
+        # respond to keys immediately (don't wait for enter)
+        curses.cbreak()
+
+        # map arrow keys to special values
+        self.screen.keypad(True)
+
+    def get_data(self):
+        char = self.screen.getch()
+        return char
 
     def turn_left(self):
         self.mc.forwardM0(CONST_VELOCITY)
@@ -51,10 +52,30 @@ class Inputs(threading.Thread):
 
     # Runs on inputs.start()
     def run(self):
-        while True:
-            data = self.get_data()
-            self.logger.info("Received: " + str(data))
-            #self.populate_queue(data)
+        try:
+            while True:
+                char = self.get_data()
+                self.logger.info("Received: " + str(char))
+                if char == ord('q'):
+                    break
+                elif char == curses.KEY_RIGHT:
+                    # print doesn't work with curses, use addstr instead
+                    self.screen.addstr(0, 0, 'right')
+                elif char == curses.KEY_LEFT:
+                    self.screen.addstr(0, 0, 'left ')
+                elif char == curses.KEY_UP:
+                    self.screen.addstr(0, 0, 'up   ')
+                elif char == curses.KEY_DOWN:
+                    self.screen.addstr(0, 0, 'down ')
+
+                #self.populate_queue(data)
+
+        finally:
+            # shut down cleanly
+            curses.nocbreak();
+            self.screen.keypad(0);
+            curses.echo()
+            curses.endwin()
 
     def populate_queue(self, data):
         self.data_queue.put(data)
