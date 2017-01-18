@@ -13,7 +13,7 @@ class Inputs(threading.Thread):
         threading.Thread.__init__(self)
         self.threadID = threadID
 
-    def get_data():
+    def get_data(self):
         key = ord(getch())
         if key == 224: #Special keys (arrows, f keys, ins, del, etc.)
             key = ord(getch())
@@ -49,11 +49,15 @@ class Inputs(threading.Thread):
     def run(self):
         while True:
             data = self.get_data()
-            if data != "trash":
-                self.populate_queue(data)
+            self.logger.info("Received: " + data)
+            self.populate_queue(data)
 
-    def populate_queue(self):
-        pass
+    def get_data(self):
+        inp = input()
+        return inp
+
+    def populate_queue(self, data):
+        self.data_queue.put(data)
 
     def normalize(self):
         pass

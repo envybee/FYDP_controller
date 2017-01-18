@@ -19,13 +19,14 @@ def main():
     inputs = Inputs()
 
     # Cleanup on Ctrl+C
-    signal.signal(signal.SIGINT, sigint_handler)
+    signal.signal(signal.SIGINT, main.sigint_handler)
 
     cL.start()
+    inputs.start()
 
-def sigint_handler(signum, frame):
-    cL.kill_received = True
-    sys.exit(0)
+    def sigint_handler(signum, frame):
+        cL.kill_received = True
+        sys.exit(0)
 
 if __name__ == "__main__":
     main()
