@@ -4,14 +4,13 @@ import curses
 
 CONST_VELOCITY = 5
 
-class Inputs(threading.Thread):
+class Inputs():
     def __init__(self, threadID, data_queue, logger):
         self.data_queue = data_queue
         self.establish_connection()
         self.mc = MCInterface()
         self.logger = logger
 
-        threading.Thread.__init__(self)
         self.threadID = threadID
 
         # get the curses screen window
