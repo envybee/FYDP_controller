@@ -10,13 +10,14 @@ from recieve_inputs import Inputs
 def main():
     logger = logging.getLogger(__name__)
 
-    input_queue = Queue()
+    med_dist_queue = Queue()
+    lat_dist_queue = Queue()
 
     # Initialize controller module
-    cL = ControllerLoop(1, input_queue, logger)
+    cL = ControllerLoop(1, med_dist_queue, lat_dist_queue, logger)
 
     # Initialize input handler
-    inputs = Inputs(2, input_queue, logger)
+    inputs = Inputs(2, med_dist_queue, lat_dist_queue, logger)
 
     # Cleanup on Ctrl+C
     #signal.signal(signal.SIGINT, main.sigint_handler)

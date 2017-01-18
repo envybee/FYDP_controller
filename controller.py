@@ -12,7 +12,7 @@ class InputFilter():
         pass
 
 class ControllerLoop(threading.Thread):
-    def __init__(self, threadID, q, logger):
+    def __init__(self, threadID, med_dist_queue, lat_dist_queue, logger):
         self.logger = logger
 
         threading.Thread.__init__(self)
@@ -24,7 +24,8 @@ class ControllerLoop(threading.Thread):
         self.Kp = 1.5
         self.Ki = 0.3
         self.Kd = 0.7
-        self.dataQueue = q
+        self.med_dist_queue = med_dist_queue
+        self.lat_dist_queue = lat_dist_queue
         self.kill_received = False
 
     def setVelocity(self, currVelocity):
@@ -40,11 +41,11 @@ class ControllerLoop(threading.Thread):
         firstRun = True
         while (True and not self.kill_received):
 
-            if(self.dataQueue.empty()):
+            if(self.med_dist_queue.empty()):
                 continue
-            (error, currTime) = self.dataQueue.get()
+            (error, currTime) = self.med_dist_queue.get()
 
-            self.logger.debug("%.2f" % round(error,2), "Queue: " + str(self.dataQueue.queue))
+            self.logger.debug("%.2f" % round(error,2), "Queue: " + str(self.med_dist_queue.queue))
             
             #Record the time
             if(self.prevTime is None):
