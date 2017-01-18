@@ -60,12 +60,16 @@ class Inputs():
                 elif char == curses.KEY_RIGHT:
                     # print doesn't work with curses, use addstr instead
                     self.screen.addstr(0, 0, 'right')
+                    self.turn_right()
                 elif char == curses.KEY_LEFT:
                     self.screen.addstr(0, 0, 'left ')
+                    self.turn_left()
                 elif char == curses.KEY_UP:
                     self.screen.addstr(0, 0, 'up   ')
+                    self.forward()
                 elif char == curses.KEY_DOWN:
                     self.screen.addstr(0, 0, 'down ')
+                    self.reverse()
 
                 #self.populate_queue(data)
 
