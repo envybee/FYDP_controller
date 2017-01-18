@@ -1,8 +1,9 @@
 from MotorController import MCInterface
 import threading
 import curses
+import time
 
-CONST_VELOCITY = 5
+CONST_VELOCITY = 50
 
 class Inputs():
     def __init__(self, threadID, data_queue, logger):
@@ -29,19 +30,19 @@ class Inputs():
         char = self.screen.getch()
         return char
 
-    def turn_left(self):
+    def turn_left(self, CONST_VELOCITY):
         self.mc.forwardM0(CONST_VELOCITY)
         self.mc.forwardM0(CONST_VELOCITY)
 
-    def turn_right(self):
+    def turn_right(self, CONST_VELOCITY):
         self.mc.reverseM1(CONST_VELOCITY)
         self.mc.reverseM1(CONST_VELOCITY)
 
-    def forward(self):
+    def forward(self, CONST_VELOCITY):
         self.mc.forwardM0(CONST_VELOCITY)
         self.mc.reverseM1(CONST_VELOCITY)
 
-    def reverse(self):
+    def reverse(self, CONST_VELOCITY):
         normVel = abs(int(2*CONST_VELOCITY))
         self.mc.reverseM0(normVel)
         self.mc.forwardM1(normVel)
@@ -60,16 +61,24 @@ class Inputs():
                 elif char == curses.KEY_RIGHT:
                     # print doesn't work with curses, use addstr instead
                     self.screen.addstr(0, 0, 'right')
-                    self.turn_right()
+                    self.turn_right(CONST_VELOCITY)
+                    time.sleep(1)
+                    self.turn_right(0)
                 elif char == curses.KEY_LEFT:
                     self.screen.addstr(0, 0, 'left ')
-                    self.turn_left()
+                    self.turn_left(CONST_VELOCITY)
+                    time.sleep(1)
+                    self.turn_left(0)
                 elif char == curses.KEY_UP:
                     self.screen.addstr(0, 0, 'up   ')
-                    self.forward()
+                    self.forward(CONST_VELOCITY)
+                    time.sleep(1)
+                    self.turn_left(0)
                 elif char == curses.KEY_DOWN:
                     self.screen.addstr(0, 0, 'down ')
-                    self.reverse()
+                    self.reverse(CONST_VELOCITY)
+                    time.sleep(1)
+                    self.reverse(0)
 
                 #self.populate_queue(data)
 
