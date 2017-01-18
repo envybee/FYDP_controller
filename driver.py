@@ -16,12 +16,12 @@ def main():
     cL = ControllerLoop(1, input_queue, logger)
 
     # Initialize input handler
-    inputs = Inputs()
+    inputs = Inputs(2, input_queue, logger)
 
     # Cleanup on Ctrl+C
     signal.signal(signal.SIGINT, main.sigint_handler)
 
-    cL.start()
+    #cL.start()
     inputs.start()
 
     def sigint_handler(signum, frame):
