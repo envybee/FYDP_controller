@@ -41,7 +41,6 @@ M1_GET_SPEED = 0x93
 #QIK_CONFIG_SERIAL_TIMEOUT =  3
 
 class MCInterface:
-
 	def __init__(self,**kwargs):
 
 		port=kwargs.get('serialPort', "/dev/ttyAMA0")
@@ -58,10 +57,12 @@ class MCInterface:
 		#Establish contact with the motor controller
 		self.establishConnection()
 
+
 	def establishConnection(self):
 		del self.message[:]
 		self.message.append(CONTROLLER_AUTODETECT)
 		self.serialport.write(self.message)
+
 
 	def forwardM0(self, speed):
 		del self.message[:]
@@ -79,12 +80,11 @@ class MCInterface:
 			if speed > 127:
 				speed = 127
 
-			self.message.append(M0_MOVE_FORWARD_8BIT)		
+			self.message.append(M0_MOVE_FORWARD_8BIT)
 		self.message.append(speed)
 		self.serialport.write(self.message)
 
 	def forwardM1(self, speed):
-		
 		del self.message[:]
 
 		if speed < 0:
@@ -101,7 +101,7 @@ class MCInterface:
 			if speed > 127:
 				speed = 127
 
-			self.message.append(M1_MOVE_FORWARD_8BIT)		
+			self.message.append(M1_MOVE_FORWARD_8BIT)
 
 		self.message.append(speed)
 		self.serialport.write(self.message)
@@ -125,10 +125,11 @@ class MCInterface:
 			if speed > 127:
 				speed = 127
 
-			self.message.append(M0_MOVE_REVERSE_8BIT)		
+			self.message.append(M0_MOVE_REVERSE_8BIT)
 
 		self.message.append(speed)
 		self.serialport.write(self.message)
+
 
 	def reverseM1(self, speed):
 		
@@ -148,14 +149,16 @@ class MCInterface:
 			if speed > 127:
 				speed = 127
 
-			self.message.append(M1_MOVE_REVERSE_8BIT)		
+			self.message.append(M1_MOVE_REVERSE_8BIT)
 
 		self.message.append(speed)
 		self.serialport.write(self.message)
 
+
 	def setVelocity(self, velocity):
 		self.setVelocityM0(velocity)
 		self.setVelocityM1(velocity)
+
 
 	def setVelocityM0(self, velocity):
 
@@ -164,8 +167,8 @@ class MCInterface:
 		elif velocity < 0:
 			self.reverseM0(velocity)
 
-	def setVelocityM1(self, velocity):
 
+	def setVelocityM1(self, velocity):
 		if velocity > 0:
 			self.forwardM1(velocity)
 		elif velocity < 0:

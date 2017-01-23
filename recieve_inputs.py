@@ -84,8 +84,8 @@ class Inputs():
 
         finally:
             # shut down cleanly
-            curses.nocbreak();
-            self.screen.keypad(0);
+            curses.nocbreak()
+            self.screen.keypad(0)
             curses.echo()
             curses.endwin()
 

@@ -3,13 +3,15 @@ import time
 from MotorController import MCInterface
 import threading
 
+
 # Store necessary values to perform sliding window/Kalman filtering and other filtering
-class InputFilter():
+class InputFilter:
     def __init__(self):
         pass
 
     def filter(self):
         pass
+
 
 class ControllerLoop(threading.Thread):
     def __init__(self, threadID, med_dist_queue, lat_dist_queue, logger):
@@ -18,7 +20,8 @@ class ControllerLoop(threading.Thread):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.mc = MCInterface()
-        #Initialize
+
+        # Initialize
         self.prevTime = None
 
         self.Kp = 1.5
@@ -29,7 +32,7 @@ class ControllerLoop(threading.Thread):
         self.kill_received = False
 
     def setVelocity(self, currVelocity):
-        if(currVelocity > 0):
+        if currVelocity > 0:
             self.mc.forwardM0(currVelocity)
             self.mc.reverseM1(currVelocity)
         else:
@@ -48,7 +51,7 @@ class ControllerLoop(threading.Thread):
             self.logger.debug("%.2f" % round(error,2), "Queue: " + str(self.med_dist_queue.queue))
             
             #Record the time
-            if(self.prevTime is None):
+            if self.prevTime is None:
                 self.prevTime = currTime
                 prevError = error
                 intError = error
@@ -67,7 +70,7 @@ class ControllerLoop(threading.Thread):
             intError = prevError + (error * deltaT)
             prevError = error
 
-            #print(diffError, intError)
+            self.logger.info(diffError, intError)
 
             currVelocity = self.Kp * error + self.Kd * diffError + self.Ki * intError        
             currVelocity = int(currVelocity)
@@ -75,7 +78,7 @@ class ControllerLoop(threading.Thread):
             if(-5 < currVelocity and currVelocity < 5):
                 currVelocity = 0
 
-            if(firstRun):
+            if firstRun:
                 firstRun = False
                 for i in range(1,currVelocity,10) :
                     self.setVelocity(i)
