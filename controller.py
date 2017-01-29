@@ -1,5 +1,3 @@
-import serial
-import time
 from MotorController import MCInterface
 import threading
 
@@ -7,10 +5,56 @@ import threading
 # Store necessary values to perform sliding window/Kalman filtering and other filtering
 class InputFilter:
     def __init__(self):
-        pass
+        # Initialize
+        self.prevTime = None
 
-    def filter(self):
-        pass
+        self.Kp = 1.5
+        self.Ki = 0.3
+        self.Kd = 0.7
+
+        self.output_threshold = 5
+
+    def filter(self, cur_velocity):
+        return self.check_thresholds(cur_velocity)
+
+    def check_thresholds(self, cur_velocity):
+        if -1 * self.output_threshold < cur_velocity < self.output_threshold:
+            return 0
+
+        return cur_velocity
+
+    def error2vel(self, error):
+        return error
+
+    # Not in use currently
+    def pid(self, cur_velocity, new_velocity, cur_time, error):
+
+        # Record the time
+        if self.prevTime is None:
+            self.prevTime = cur_time
+            prevError = error
+            intError = error
+            return
+
+        deltaT = (cur_time - self.prevTime) * 100
+        self.prevTime = cur_time
+
+        # error = currVelocity - prevVelocity
+        self.logger.info(error, cur_velocity, deltaT)
+
+        # if(abs(error/prevVelocity) > 0.5):
+        #   continue
+
+        diffError = (error - self.prevError) / deltaT
+        intError = self.prevError + (error * deltaT)
+        self.prevError = error
+
+        self.logger.info(diffError, intError)
+
+        cur_velocity = self.Kp * error + self.Kd * diffError + self.Ki * intError
+        cur_velocity = int(cur_velocity)
+
+        return cur_velocity
 
 
 class ControllerLoop(threading.Thread):
@@ -21,73 +65,66 @@ class ControllerLoop(threading.Thread):
         self.threadID = threadID
         self.mc = MCInterface()
 
-        # Initialize
-        self.prevTime = None
+        self.input_filter = InputFilter()
 
-        self.Kp = 1.5
-        self.Ki = 0.3
-        self.Kd = 0.7
         self.med_dist_queue = med_dist_queue
         self.lat_dist_queue = lat_dist_queue
         self.kill_received = False
 
-    def setVelocity(self, currVelocity):
+    def run(self):
+        while not self.kill_received:
+
+            if self.lat_dist_queue.empty():
+                self.medial_drive()
+            else:
+                self.lateral_drive()
+
+        self.stop()
+
+    def stop(self):
+        self.mc.forwardM0(0)
+        self.mc.forwardM1(0)
+
+    def set_velocity(self, currVelocity):
         if currVelocity > 0:
             self.mc.forwardM0(currVelocity)
             self.mc.reverseM1(currVelocity)
         else:
-            normVel = abs(int(2*currVelocity))
-            self.mc.reverseM0(normVel)
-            self.mc.forwardM1(normVel)
+            norm_vel = abs(int(2*currVelocity))
+            self.mc.reverseM0(norm_vel)
+            self.mc.forwardM1(norm_vel)
 
-    def run(self):
-        firstRun = True
-        while (True and not self.kill_received):
+        self.logger.info("Tuned & normalized velocity  " + str(currVelocity))
 
-            if(self.med_dist_queue.empty()):
-                continue
-            (error, currTime) = self.med_dist_queue.get()
+    def set_lateral_velocity(self, cur_velocity):
+        if cur_velocity > 0:
+            self.mc.forwardM0(cur_velocity)
+            self.mc.forwardM1(cur_velocity)
+        else:
+            norm_vel = abs(int(2*cur_velocity))
+            self.mc.reverseM0(norm_vel)
+            self.mc.reverseM1(norm_vel)
 
-            self.logger.debug("%.2f" % round(error,2), "Queue: " + str(self.med_dist_queue.queue))
-            
-            #Record the time
-            if self.prevTime is None:
-                self.prevTime = currTime
-                prevError = error
-                intError = error
-                continue
+    def medial_drive(self):
+        if self.med_dist_queue.empty():
+            self.stop()
+            return
 
-            deltaT = (currTime - self.prevTime)*100
-            self.prevTime = currTime
+        self.logger.debug("Queue: " + str(self.med_dist_queue.queue))
+        (error, cur_time) = self.med_dist_queue.get()
 
-            #error = currVelocity - prevVelocity
-            #print(error, currVelocity, prevVelocity, deltaT)
+        cur_velocity = self.input_filter.error2vel(error)
+        cur_velocity = self.input_filter.filter(cur_velocity)
 
-            #if(abs(error/prevVelocity) > 0.5):
-            #   continue
+        self.set_velocity(cur_velocity)
 
-            diffError = (error - prevError)/deltaT
-            intError = prevError + (error * deltaT)
-            prevError = error
+    def lateral_drive(self):
+        self.logger.debug("Queue: " + str(self.med_dist_queue.queue))
+        error = self.lat_dist_queue.get()
 
-            self.logger.info(diffError, intError)
+        cur_velocity = self.input_filter.error2vel(error)
+        cur_velocity = self.input_filter.filter(cur_velocity)
 
-            currVelocity = self.Kp * error + self.Kd * diffError + self.Ki * intError        
-            currVelocity = int(currVelocity)
-
-            if(-5 < currVelocity and currVelocity < 5):
-                currVelocity = 0
-
-            if firstRun:
-                firstRun = False
-                for i in range(1,currVelocity,10) :
-                    self.setVelocity(i)
-            
-            self.setVelocity(currVelocity)
-            
-            print("Tuned & normalized velocity  " + str(currVelocity))
+        self.set_lateral_velocity(cur_velocity)
 
 
-        if(self.kill_received):
-            self.mc.forwardM0(0)
-            self.mc.forwardM1(0)

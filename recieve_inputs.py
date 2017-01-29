@@ -6,9 +6,11 @@ import time
 CONST_VELOCITY = 50
 
 class Inputs():
-    def __init__(self, threadID, data_queue, logger):
-        self.data_queue = data_queue
-        self.establish_connection()
+    def __init__(self, threadID, med_dist_queue, lat_dist_queue, logger):
+        self.med_dist_queue = med_dist_queue
+        self.lat_dist_queue = lat_dist_queue
+
+        # self.establish_connection()
         self.mc = MCInterface()
         self.logger = logger
 
@@ -63,24 +65,26 @@ class Inputs():
                     self.screen.addstr(0, 0, 'right')
                     self.turn_right(CONST_VELOCITY)
                     time.sleep(1)
-                    self.turn_right(0)
+                    self.lat_dist_queue(20)
+                    # self.turn_right(0)
                 elif char == curses.KEY_LEFT:
                     self.screen.addstr(0, 0, 'left ')
                     self.turn_left(CONST_VELOCITY)
                     time.sleep(1)
-                    self.turn_left(0)
+                    self.lat_dist_queue(-20)
+                    # self.turn_left(0)
                 elif char == curses.KEY_UP:
                     self.screen.addstr(0, 0, 'up   ')
                     self.forward(CONST_VELOCITY)
                     time.sleep(1)
-                    self.turn_left(0)
+                    self.med_dist_queue(20)
+                    # self.forward(0)
                 elif char == curses.KEY_DOWN:
                     self.screen.addstr(0, 0, 'down ')
                     self.reverse(CONST_VELOCITY)
                     time.sleep(1)
-                    self.reverse(0)
-
-                #self.populate_queue(data)
+                    self.med_dist_queue(-20)
+                    # self.reverse(0)
 
         finally:
             # shut down cleanly
@@ -88,9 +92,3 @@ class Inputs():
             self.screen.keypad(0)
             curses.echo()
             curses.endwin()
-
-    def populate_queue(self, data):
-        self.data_queue.put(data)
-
-    def normalize(self):
-        pass

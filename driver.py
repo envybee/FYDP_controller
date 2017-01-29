@@ -22,8 +22,8 @@ def main():
     # Cleanup on Ctrl+C
     #signal.signal(signal.SIGINT, main.sigint_handler)
 
-    #cL.start()
-    inputs.run()
+    cL.start()
+    inputs.start()
 
     def sigint_handler(signum, frame):
         cL.kill_received = True
