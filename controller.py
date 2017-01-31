@@ -111,7 +111,7 @@ class ControllerLoop(threading.Thread):
             return
 
         self.logger.debug("Queue: " + str(self.med_dist_queue.queue))
-        (error, cur_time) = self.med_dist_queue.get()
+        error = self.med_dist_queue.get()
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.filter(cur_velocity)
