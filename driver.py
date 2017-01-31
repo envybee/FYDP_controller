@@ -7,6 +7,7 @@ from Queue import Queue
 from controller import ControllerLoop
 from recieve_inputs import Inputs
 
+
 def main():
     logger = logging.getLogger(__name__)
 

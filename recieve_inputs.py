@@ -5,10 +5,13 @@ import time
 
 CONST_VELOCITY = 50
 
-class Inputs():
+
+class Inputs(threading.Thread):
     def __init__(self, threadID, med_dist_queue, lat_dist_queue, logger):
         self.med_dist_queue = med_dist_queue
         self.lat_dist_queue = lat_dist_queue
+
+        threading.Thread.__init__(self)
 
         # self.establish_connection()
         self.mc = MCInterface()
