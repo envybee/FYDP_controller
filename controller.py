@@ -119,7 +119,7 @@ class ControllerLoop(threading.Thread):
         self.set_velocity(cur_velocity)
 
     def lateral_drive(self):
-        self.logger.debug("Queue: " + str(self.med_dist_queue.queue))
+        self.logger.debug("Queue: " + str(self.lat_dist_queue.queue))
         error = self.lat_dist_queue.get()
 
         cur_velocity = self.input_filter.error2vel(error)
