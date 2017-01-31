@@ -68,25 +68,25 @@ class Inputs(threading.Thread):
                     self.screen.addstr(0, 0, 'right')
                     self.turn_right(CONST_VELOCITY)
                     time.sleep(1)
-                    self.lat_dist_queue(20)
+                    self.lat_dist_queue.put(20)
                     # self.turn_right(0)
                 elif char == curses.KEY_LEFT:
                     self.screen.addstr(0, 0, 'left ')
                     self.turn_left(CONST_VELOCITY)
                     time.sleep(1)
-                    self.lat_dist_queue(-20)
+                    self.lat_dist_queue.put(-20)
                     # self.turn_left(0)
                 elif char == curses.KEY_UP:
                     self.screen.addstr(0, 0, 'up   ')
                     self.forward(CONST_VELOCITY)
                     time.sleep(1)
-                    self.med_dist_queue(20)
+                    self.med_dist_queue.put(20)
                     # self.forward(0)
                 elif char == curses.KEY_DOWN:
                     self.screen.addstr(0, 0, 'down ')
                     self.reverse(CONST_VELOCITY)
                     time.sleep(1)
-                    self.med_dist_queue(-20)
+                    self.med_dist_queue.put(-20)
                     # self.reverse(0)
 
         finally:
