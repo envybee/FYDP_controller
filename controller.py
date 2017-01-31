@@ -1,5 +1,6 @@
 from MotorController import MCInterface
 import threading
+from time import sleep
 
 
 # Store necessary values to perform sliding window/Kalman filtering and other filtering
@@ -78,6 +79,8 @@ class ControllerLoop(threading.Thread):
                 self.medial_drive()
             else:
                 self.lateral_drive()
+
+            sleep(1)
 
         self.stop()
 
