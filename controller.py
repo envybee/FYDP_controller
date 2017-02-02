@@ -80,7 +80,7 @@ class ControllerLoop(threading.Thread):
             else:
                 self.lateral_drive()
 
-            sleep(0.2)
+            sleep(0.5)
 
         self.stop()
 
@@ -100,7 +100,7 @@ class ControllerLoop(threading.Thread):
         self.logger.info("Tuned & normalized velocity  " + str(cur_velocity))
 
     def set_lateral_velocity(self, cur_velocity):
-        norm_vel = int(0.5 * cur_velocity)
+        norm_vel = int(0.7 * cur_velocity)
         if cur_velocity > 0:
             self.mc.forwardM0(norm_vel)
             self.mc.reverseM1(norm_vel)
