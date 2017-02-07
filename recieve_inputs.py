@@ -8,8 +8,8 @@ CONST_VELOCITY = 50
 
 class Inputs(threading.Thread):
     def __init__(self, threadID, med_dist_queue, lat_dist_queue, logger):
-        self.med_dist_queue = med_dist_queue
-        self.lat_dist_queue = lat_dist_queue
+        self.med_dist = med_dist
+        self.lat_dist = lat_dist
 
         threading.Thread.__init__(self)
 
@@ -66,16 +66,16 @@ class Inputs(threading.Thread):
                 elif char == curses.KEY_RIGHT:
                     # print doesn't work with curses, use addstr instead
                     self.screen.addstr(0, 0, 'right')
-                    self.lat_dist_queue.put(50)
+                    self.lat_dist = 50
                 elif char == curses.KEY_LEFT:
                     self.screen.addstr(0, 0, 'left ')
-                    self.lat_dist_queue.put(-50)
+                    self.lat_dist = -50
                 elif char == curses.KEY_UP:
                     self.screen.addstr(0, 0, 'up   ')
-                    self.med_dist_queue.put(50)
+                    self.med_dist = 50
                 elif char == curses.KEY_DOWN:
                     self.screen.addstr(0, 0, 'down ')
-                    self.med_dist_queue.put(-50)
+                    self.med_dist = -50
 
         finally:
             # shut down cleanly
