@@ -27,6 +27,7 @@ class InputFilter:
         return self.check_thresholds(target_vel)
 
     def check_thresholds(self, cur_velocity):
+	cur_velocity = cur_velocity * 150
         if -1 * self.output_threshold < cur_velocity < self.output_threshold:
             return 0
 
@@ -96,12 +97,14 @@ class ControllerLoop(threading.Thread):
         self.logger.info("Tuned & normalized velocity  " + str(cur_velocity))
 
     def set_lateral_velocity(self, cur_velocity):
+
+        print("Lateral Drive!!!   --->" + str(cur_velocity))
         norm_vel = int(0.7 * cur_velocity)
         if cur_velocity > 0:
             self.mc.forwardM0(norm_vel)
             self.mc.reverseM1(norm_vel)
         else:
-            norm_vel = abs(cur_velocity)
+            norm_vel = abs(int(cur_velocity))
             self.mc.reverseM0(norm_vel)
             self.mc.forwardM1(norm_vel)
 
@@ -121,6 +124,7 @@ class ControllerLoop(threading.Thread):
     def lateral_drive(self):
         self.logger.debug("Queue: " + str(self.lat_dist_queue.queue))
         error = self.lat_dist_queue.get()
+	#print("Retreived --> " + str(error))
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.filter(cur_velocity)
