@@ -70,7 +70,7 @@ class ControllerLoop(threading.Thread):
         self.input_filter = InputFilter()
 
         self.med_value = med_value
-        self.med_value = med_value
+        self.lat_value = lat_value
         self.kill_received = False
 
     def run(self):
