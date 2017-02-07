@@ -30,8 +30,8 @@ def main():
     #signal.signal(signal.SIGINT, main.sigint_handler)
 
     cL.start()
-    #inputs.start()
-    vision.start()
+    inputs.start()
+    #vision.start()
 
     def sigint_handler(signum, frame):
         cL.kill_received = True
