@@ -15,8 +15,11 @@ def main():
 
     logger.setLevel(logging.DEBUG)
 
-    med_value = deque(maxlen=1)
-    lat_value = deque(maxlen=1)
+    #med_value = deque(maxlen=1)
+    #lat_value = deque(maxlen=1)
+
+    med_value = []
+    lat_value = []
 
     # Initialize controller module
     cL = ControllerLoop(1, med_value, lat_value, logger)
@@ -32,6 +35,9 @@ def main():
     cL.start()
     inputs.start()
     #vision.start()
+
+    cL.join()
+    inputs.join()
 
     def sigint_handler(signum, frame):
         cL.kill_received = True

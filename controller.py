@@ -78,7 +78,7 @@ class ControllerLoop(threading.Thread):
     def run(self):
         while not self.kill_received:
 
-            if self.lat_value.Empty():
+            if self.lat_value[0] == 0:
                 self.medial_drive()
             else:
                 self.lateral_drive()
@@ -116,7 +116,7 @@ class ControllerLoop(threading.Thread):
 
     def medial_drive(self):
         self.logger.debug("med_value: " + str(self.med_value))
-        error = self.med_value.get()
+        error = self.med_value[0]
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.medial_filter(cur_velocity)
@@ -125,7 +125,7 @@ class ControllerLoop(threading.Thread):
 
     def lateral_drive(self):
         self.logger.debug("lat_value: " + str(self.lat_value))
-        error = self.lat_value.get()
+        error = self.lat_value[0]
 	    #print("Retreived --> " + str(error))
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.lateral_filter(cur_velocity)

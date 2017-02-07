@@ -1,7 +1,6 @@
 from MotorController import MCInterface
 import threading
 import curses
-import time
 
 CONST_VELOCITY = 50
 
@@ -66,16 +65,16 @@ class Inputs(threading.Thread):
                 elif char == curses.KEY_RIGHT:
                     # print doesn't work with curses, use addstr instead
                     self.screen.addstr(0, 0, 'right')
-                    self.lat_dist.append(50)
+                    self.lat_dist[0] = 50
                 elif char == curses.KEY_LEFT:
                     self.screen.addstr(0, 0, 'left ')
-                    self.lat_dist.append(-50)
+                    self.lat_dist[0] = -50
                 elif char == curses.KEY_UP:
                     self.screen.addstr(0, 0, 'up   ')
-                    self.med_dist.append(50)
+                    self.med_dist[0] = 50
                 elif char == curses.KEY_DOWN:
                     self.screen.addstr(0, 0, 'down ')
-                    self.med_dist.append(-50)
+                    self.med_dist[0] = -50
 
         finally:
             # shut down cleanly
