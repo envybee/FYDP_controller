@@ -15,7 +15,7 @@ class InputFilter:
 
         self.Kp = 0.6
         self.Ki = 0.7
-        self.Kd = 0.07
+        self.Kd = 0.03
 
         self.deltaT = 0.1
 
@@ -118,19 +118,20 @@ class ControllerLoop(threading.Thread):
             self.mc.forwardM1(15 + norm_vel)
 
     def medial_drive(self):
-        self.logger.debug("med_value: " + str(self.med_value))
+        self.logger.debug("Received med_value: " + str(self.med_value))
         error = self.med_value[0]
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.medial_filter(cur_velocity)
 
+        self.logger.debug("cur_velocity: " + str(self.cur_velocity))
+
         #self.set_velocity(cur_velocity)
 
     def lateral_drive(self):
-        self.logger.debug("lat_value: " + str(self.lat_value))
         error = self.lat_value[0]
 
-        self.logger.info("Retreived --> " + str(error))
+        self.logger.info("Received lat_value: " + str(error))
         cur_velocity = self.input_filter.error2vel_vision(error)
         cur_velocity = self.input_filter.lateral_filter(cur_velocity)
 
