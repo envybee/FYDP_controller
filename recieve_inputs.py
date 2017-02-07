@@ -7,7 +7,7 @@ CONST_VELOCITY = 50
 
 
 class Inputs(threading.Thread):
-    def __init__(self, threadID, med_dist_queue, lat_dist_queue, logger):
+    def __init__(self, threadID, med_dist, lat_dist, logger):
         self.med_dist = med_dist
         self.lat_dist = lat_dist
 
