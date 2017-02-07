@@ -78,7 +78,7 @@ class ControllerLoop(threading.Thread):
     def run(self):
         while not self.kill_received:
 
-            if self.lat_value == 0:
+            if self.lat_value.Empty():
                 self.medial_drive()
             else:
                 self.lateral_drive()
