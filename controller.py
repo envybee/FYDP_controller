@@ -2,7 +2,6 @@ from MotorController import MCInterface
 import threading
 from time import sleep
 
-
 # Store necessary values to perform sliding window/Kalman filtering and other filtering
 class InputFilter:
     def __init__(self, logger):
@@ -72,8 +71,8 @@ class ControllerLoop(threading.Thread):
 
         self.input_filter = InputFilter(logger)
 
-        self.med_value = med_value[0]
-        self.lat_value = lat_value[0]
+        self.med_value = med_value
+        self.lat_value = lat_value
         self.kill_received = False
 
     def run(self):
@@ -117,7 +116,7 @@ class ControllerLoop(threading.Thread):
 
     def medial_drive(self):
         self.logger.debug("med_value: " + str(self.med_value))
-        error = self.med_value
+        error = self.med_value.get()
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.medial_filter(cur_velocity)
@@ -126,7 +125,7 @@ class ControllerLoop(threading.Thread):
 
     def lateral_drive(self):
         self.logger.debug("lat_value: " + str(self.lat_value))
-        error = self.lat_value
+        error = self.lat_value.get()
 	    #print("Retreived --> " + str(error))
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.lateral_filter(cur_velocity)

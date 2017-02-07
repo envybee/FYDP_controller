@@ -3,7 +3,7 @@ import logging
 import signal
 import sys
 
-from Queue import Queue
+from collections import deque
 from controller import ControllerLoop
 from recieve_inputs import Inputs
 from vision_subsystem import Vision_Subsystem
@@ -15,8 +15,8 @@ def main():
 
     logger.setLevel(logging.DEBUG)
 
-    med_value = [0]
-    lat_value = [0]
+    med_value = deque(maxlen=1)
+    lat_value = deque(maxlen=1)
 
     # Initialize controller module
     cL = ControllerLoop(1, med_value, lat_value, logger)
