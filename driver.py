@@ -10,6 +10,10 @@ from vision_subsystem import Vision_Subsystem
 
 def main():
     logger = logging.getLogger(__name__)
+    file_hdlr = logging.FileHandler('/var/log/controller.log')
+    logger.addHandler(file_hdlr)
+
+    logger.setLevel(logging.DEBUG)
 
     med_value = 0
     lat_value = 0
