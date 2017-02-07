@@ -20,8 +20,8 @@ if rpi:
 
 class Vision_Subsystem(threading.Thread):
 
-    def __init__(self, threadID, lat_dist_queue, logger, debug_mode=False):
-        self.lat_dist_queue = lat_dist_queue
+    def __init__(self, threadID, lat_value, logger, debug_mode=False):
+        self.lat_value = lat_value
         self.logger = logger
         self.threadID = threadID
         self.debug_mode = debug_mode
@@ -202,7 +202,7 @@ class Vision_Subsystem(threading.Thread):
 
             # Add it to the control system queue
             if not self.debug_mode:
-                self.lat_dist_queue.put(normalizedLatOffset)
+                self.lat_value = normalizedLatOffset
         	#print("Sending!!!   --->" + str(normalizedLatOffset))
 
 

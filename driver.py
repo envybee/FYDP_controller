@@ -11,16 +11,16 @@ from vision_subsystem import Vision_Subsystem
 def main():
     logger = logging.getLogger(__name__)
 
-    med_dist_queue = Queue()
-    lat_dist_queue = Queue()
+    med_value = 0
+    lat_value = 0
 
     # Initialize controller module
-    cL = ControllerLoop(1, med_dist_queue, lat_dist_queue, logger)
+    cL = ControllerLoop(1, med_value, lat_value, logger)
 
     # Initialize input handler
-    inputs = Inputs(2, med_dist_queue, lat_dist_queue, logger)
+    inputs = Inputs(2, med_value, lat_value, logger)
 
-    vision = Vision_Subsystem(1, lat_dist_queue, logger, False)
+    vision = Vision_Subsystem(1, lat_value, logger, False)
 
     # Cleanup on Ctrl+C
     #signal.signal(signal.SIGINT, main.sigint_handler)

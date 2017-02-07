@@ -60,7 +60,7 @@ class InputFilter:
 
 
 class ControllerLoop(threading.Thread):
-    def __init__(self, threadID, med_dist_queue, lat_dist_queue, logger):
+    def __init__(self, threadID, med_value, lat_value, logger):
         self.logger = logger
 
         threading.Thread.__init__(self)
@@ -69,14 +69,14 @@ class ControllerLoop(threading.Thread):
 
         self.input_filter = InputFilter()
 
-        self.med_dist_queue = med_dist_queue
-        self.lat_dist_queue = lat_dist_queue
+        self.med_value = med_value
+        self.med_value = med_value
         self.kill_received = False
 
     def run(self):
         while not self.kill_received:
 
-            if self.lat_dist_queue.empty():
+            if self.med_value != 0:
                 self.medial_drive()
             else:
                 self.lateral_drive()
@@ -113,12 +113,12 @@ class ControllerLoop(threading.Thread):
             self.mc.forwardM1(norm_vel)
 
     def medial_drive(self):
-        if self.med_dist_queue.empty():
+        if self.med_value == 0:
             self.stop()
             return
 
-        self.logger.debug("Queue: " + str(self.med_dist_queue.queue))
-        error = self.med_dist_queue.get()
+        self.logger.debug("med_value: " + str(self.med_value))
+        error = self.med_value
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.filter(cur_velocity)
@@ -126,8 +126,8 @@ class ControllerLoop(threading.Thread):
         self.set_velocity(cur_velocity)
 
     def lateral_drive(self):
-        self.logger.debug("Queue: " + str(self.lat_dist_queue.queue))
-        error = self.lat_dist_queue.get()
+        self.logger.debug("lat_value: " + str(self.lat_value))
+        error = self.lat_value
 	#print("Retreived --> " + str(error))
 
         cur_velocity = self.input_filter.error2vel(error)
