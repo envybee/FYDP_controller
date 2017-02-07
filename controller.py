@@ -23,7 +23,7 @@ class InputFilter:
         self.output_threshold = 5
 
     def filter(self, target_vel):
-        self.logger.info("PID output: " + self.pid(target_vel))
+        self.logger.info("PID output: " + str(self.pid(target_vel)))
         return self.check_thresholds(target_vel)
 
     def check_thresholds(self, cur_velocity):
