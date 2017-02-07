@@ -14,16 +14,23 @@ class InputFilter:
         self.target_vel = 0
         self.cur_vel = 0
 
-        self.Kp = 1
-        self.Ki = 0.3
-        self.Kd = 0.7
+        self.Kp = 0.6
+        self.Ki = 0.7
+        self.Kd = 0.07
 
-        self.deltaT = 0.0001
+        self.deltaT = 0.1
 
         self.output_threshold = 5
 
-    def filter(self, target_vel):
-        self.logger.info("PID output: " + self.pid(target_vel))
+    def medial_filter(self, target_vel = None):
+        self.logger.info("PID output: " + str(self.pid(target_vel)))
+
+        if target_vel is None:
+            return 0
+
+        return self.check_thresholds(target_vel)
+
+    def lateral_filter(self, target_vel):
         return self.check_thresholds(target_vel)
 
     def check_thresholds(self, cur_velocity):
@@ -109,15 +116,12 @@ class ControllerLoop(threading.Thread):
             self.mc.forwardM1(norm_vel)
 
     def medial_drive(self):
-        if self.med_dist_queue.empty():
-            self.stop()
-            return
-
-        self.logger.debug("Queue: " + str(self.med_dist_queue.queue))
-        error = self.med_dist_queue.get()
+        if not self.med_dist_queue.empty():
+            self.logger.debug("Queue: " + str(self.med_dist_queue.queue))
+            error = self.med_dist_queue.get()
 
         cur_velocity = self.input_filter.error2vel(error)
-        cur_velocity = self.input_filter.filter(cur_velocity)
+        cur_velocity = self.input_filter.medial_filter(cur_velocity)
 
         #self.set_velocity(cur_velocity)
 
@@ -125,7 +129,7 @@ class ControllerLoop(threading.Thread):
         self.logger.debug("Queue: " + str(self.lat_dist_queue.queue))
         error = self.lat_dist_queue.get()
         cur_velocity = self.input_filter.error2vel(error)
-        cur_velocity = self.input_filter.filter(cur_velocity)
+        cur_velocity = self.input_filter.lateral_filter(cur_velocity)
 
         #self.set_lateral_velocity(cur_velocity)
 
