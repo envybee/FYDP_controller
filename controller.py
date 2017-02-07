@@ -18,12 +18,12 @@ class InputFilter:
         self.Ki = 0.3
         self.Kd = 0.7
 
-        self.deltaT = 0.01
+        self.deltaT = 0.0001
 
         self.output_threshold = 5
 
     def filter(self, target_vel):
-        self.logger.info(self.pid(target_vel))
+        self.logger.info("PID output: " + self.pid(target_vel))
         return self.check_thresholds(target_vel)
 
     def check_thresholds(self, cur_velocity):
@@ -42,12 +42,12 @@ class InputFilter:
 
         error = self.target_vel - self.cur_vel
 
-        self.logger.info(error, target_vel)
+        self.logger.info("Error: " + str(error) + ", Target Value: " + str(target_vel))
 
         diff_error = error / self.deltaT
         int_error = (error * self.deltaT)
 
-        self.logger.info(diff_error, int_error)
+        self.logger.info("Diff Error: " + str(diff_error) + ", Int Error: " + str(int_error))
 
         self.cur_vel = self.cur_vel + self.Kp * error + self.Kd * diff_error + self.Ki * int_error
         self.cur_vel = int(self.cur_vel)
