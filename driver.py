@@ -37,7 +37,8 @@ def main():
     vision.start()
 
     cL.join()
-    inputs.join()
+    #inputs.join()
+    vision.join()
 
     def sigint_handler(signum, frame):
         cL.kill_received = True

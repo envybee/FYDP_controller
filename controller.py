@@ -38,8 +38,11 @@ class InputFilter:
 
         return cur_velocity
 
+    def error2vel(self, error):
+        return error
+
     def error2vel_vision(self, error):
-        cur_velocity = error * 150
+        cur_velocity = error * 100
         return cur_velocity
 
     def pid(self, target_vel = None):
@@ -83,7 +86,7 @@ class ControllerLoop(threading.Thread):
             else:
                 self.lateral_drive()
 
-            sleep(0.1)
+            sleep(1)
 
         self.stop()
 
@@ -104,15 +107,15 @@ class ControllerLoop(threading.Thread):
 
     def set_lateral_velocity(self, cur_velocity):
 
-        print("Lateral Drive!!!   --->" + str(cur_velocity))
-        norm_vel = int(0.7 * cur_velocity)
+        self.logger.info("Lateral Drive!!!   --->" + str(cur_velocity))
+        norm_vel = int(cur_velocity)
         if cur_velocity > 0:
-            self.mc.forwardM0(norm_vel)
-            self.mc.reverseM1(norm_vel)
+            self.mc.forwardM0(15 + norm_vel)
+            self.mc.reverseM1(15)
         else:
             norm_vel = abs(int(cur_velocity))
-            self.mc.reverseM0(norm_vel)
-            self.mc.forwardM1(norm_vel)
+            self.mc.reverseM0(15)
+            self.mc.forwardM1(15 + norm_vel)
 
     def medial_drive(self):
         self.logger.debug("med_value: " + str(self.med_value))

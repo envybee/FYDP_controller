@@ -82,7 +82,7 @@ class Vision_Subsystem(threading.Thread):
         if rpi:
             cam = PiCamera()
             cam.resolution = (640, 480)
-            cam.framerate = 8
+            cam.framerate = 16
             raw_capture = PiRGBArray(cam, size=(640, 480))
             camWidth = 640
             camHeight = 480
