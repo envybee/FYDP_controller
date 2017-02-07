@@ -15,8 +15,8 @@ def main():
 
     logger.setLevel(logging.DEBUG)
 
-    med_value = 0
-    lat_value = 0
+    med_value = [0]
+    lat_value = [0]
 
     # Initialize controller module
     cL = ControllerLoop(1, med_value, lat_value, logger)

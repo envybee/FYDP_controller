@@ -72,19 +72,19 @@ class ControllerLoop(threading.Thread):
 
         self.input_filter = InputFilter(logger)
 
-        self.med_value = med_value
-        self.lat_value = lat_value
+        self.med_value = med_value[0]
+        self.lat_value = lat_value[0]
         self.kill_received = False
 
     def run(self):
         while not self.kill_received:
 
-            if self.med_value != 0:
+            if self.lat_value == 0:
                 self.medial_drive()
             else:
                 self.lateral_drive()
 
-            sleep(0.5)
+            sleep(0.1)
 
         self.stop()
 
