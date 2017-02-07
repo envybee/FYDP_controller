@@ -58,6 +58,7 @@ class Inputs(threading.Thread):
     def run(self):
         try:
             while True:
+                self.lat_dist[0] = 0
                 char = self.get_data()
                 self.logger.info("Received: " + str(char))
                 if char == ord('q'):

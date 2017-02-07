@@ -18,8 +18,8 @@ def main():
     #med_value = deque(maxlen=1)
     #lat_value = deque(maxlen=1)
 
-    med_value = []
-    lat_value = []
+    med_value = [0]
+    lat_value = [0]
 
     # Initialize controller module
     cL = ControllerLoop(1, med_value, lat_value, logger)
@@ -33,8 +33,8 @@ def main():
     #signal.signal(signal.SIGINT, main.sigint_handler)
 
     cL.start()
-    inputs.start()
-    #vision.start()
+    #inputs.start()
+    vision.start()
 
     cL.join()
     inputs.join()

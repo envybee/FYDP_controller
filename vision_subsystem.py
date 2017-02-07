@@ -121,7 +121,7 @@ class Vision_Subsystem(threading.Thread):
                 retval = True
                 img = frame_iter.next()
                 img = img.array
-		img.setflags(write=1)
+                img.setflags(write=1)
                 raw_capture.truncate(0)
             else:
                 # Read from camera (get a frame)
@@ -202,7 +202,7 @@ class Vision_Subsystem(threading.Thread):
 
             # Add it to the control system queue
             if not self.debug_mode:
-                self.lat_value = normalizedLatOffset
+                self.lat_value[0] = normalizedLatOffset
         	#print("Sending!!!   --->" + str(normalizedLatOffset))
 
 

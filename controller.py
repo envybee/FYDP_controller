@@ -33,13 +33,13 @@ class InputFilter:
         return self.check_thresholds(target_vel)
 
     def check_thresholds(self, cur_velocity):
-        #cur_velocity = cur_velocity * 150
         if -1 * self.output_threshold < cur_velocity < self.output_threshold:
             return 0
 
         return cur_velocity
 
-    def error2vel(self, error):
+    def error2vel_vision(self, error):
+        cur_velocity = cur_velocity * 150
         return error
 
     def pid(self, target_vel = None):
@@ -126,10 +126,11 @@ class ControllerLoop(threading.Thread):
     def lateral_drive(self):
         self.logger.debug("lat_value: " + str(self.lat_value))
         error = self.lat_value[0]
-	    #print("Retreived --> " + str(error))
-        cur_velocity = self.input_filter.error2vel(error)
+
+        self.logger.info("Retreived --> " + str(error))
+        cur_velocity = self.input_filter.error2vel_vision(error)
         cur_velocity = self.input_filter.lateral_filter(cur_velocity)
 
-        #self.set_lateral_velocity(cur_velocity)
+        self.set_lateral_velocity(cur_velocity)
 
 
