@@ -116,6 +116,7 @@ class ControllerLoop(threading.Thread):
             self.mc.forwardM1(norm_vel)
 
     def medial_drive(self):
+        error = None
         if not self.med_dist_queue.empty():
             self.logger.debug("Queue: " + str(self.med_dist_queue.queue))
             error = self.med_dist_queue.get()
