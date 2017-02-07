@@ -10,6 +10,10 @@ from recieve_inputs import Inputs
 
 def main():
     logger = logging.getLogger(__name__)
+    file_hdlr = logging.FileHandler('/var/log/controller.log')
+    logger.addHandler(file_hdlr)
+
+    logger.setLevel(logging.DEBUG)
 
     med_dist_queue = Queue()
     lat_dist_queue = Queue()

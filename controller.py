@@ -5,18 +5,26 @@ from time import sleep
 
 # Store necessary values to perform sliding window/Kalman filtering and other filtering
 class InputFilter:
-    def __init__(self):
+    def __init__(self, logger):
         # Initialize
+        self.logger = logger
+
         self.prevTime = None
 
-        self.Kp = 1.5
+        self.target_vel = 0
+        self.cur_vel = 0
+
+        self.Kp = 1
         self.Ki = 0.3
         self.Kd = 0.7
 
+        self.deltaT = 0.01
+
         self.output_threshold = 5
 
-    def filter(self, cur_velocity):
-        return self.check_thresholds(cur_velocity)
+    def filter(self, target_vel):
+        self.logger.info(self.pid(target_vel))
+        return self.check_thresholds(target_vel)
 
     def check_thresholds(self, cur_velocity):
         if -1 * self.output_threshold < cur_velocity < self.output_threshold:
@@ -27,35 +35,23 @@ class InputFilter:
     def error2vel(self, error):
         return error
 
-    # Not in use currently
-    def pid(self, cur_velocity, new_velocity, cur_time, error):
+    def pid(self, target_vel = None):
+        if target_vel is not None:
+            self.target_vel = target_vel
 
-        # Record the time
-        if self.prevTime is None:
-            self.prevTime = cur_time
-            prevError = error
-            intError = error
-            return
+        error = self.target_vel - self.cur_vel
 
-        deltaT = (cur_time - self.prevTime) * 100
-        self.prevTime = cur_time
+        self.logger.info(error, target_vel)
 
-        # error = currVelocity - prevVelocity
-        self.logger.info(error, cur_velocity, deltaT)
+        diff_error = error / self.deltaT
+        int_error = (error * self.deltaT)
 
-        # if(abs(error/prevVelocity) > 0.5):
-        #   continue
+        self.logger.info(diff_error, int_error)
 
-        diffError = (error - self.prevError) / deltaT
-        intError = self.prevError + (error * deltaT)
-        self.prevError = error
+        self.cur_vel = self.cur_vel + self.Kp * error + self.Kd * diff_error + self.Ki * int_error
+        self.cur_vel = int(self.cur_vel)
 
-        self.logger.info(diffError, intError)
-
-        cur_velocity = self.Kp * error + self.Kd * diffError + self.Ki * intError
-        cur_velocity = int(cur_velocity)
-
-        return cur_velocity
+        return self.cur_vel
 
 
 class ControllerLoop(threading.Thread):
@@ -66,7 +62,7 @@ class ControllerLoop(threading.Thread):
         self.threadID = threadID
         self.mc = MCInterface()
 
-        self.input_filter = InputFilter()
+        self.input_filter = InputFilter(logger)
 
         self.med_dist_queue = med_dist_queue
         self.lat_dist_queue = lat_dist_queue
@@ -120,7 +116,7 @@ class ControllerLoop(threading.Thread):
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.filter(cur_velocity)
 
-        self.set_velocity(cur_velocity)
+        #self.set_velocity(cur_velocity)
 
     def lateral_drive(self):
         self.logger.debug("Queue: " + str(self.lat_dist_queue.queue))
@@ -129,6 +125,6 @@ class ControllerLoop(threading.Thread):
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.filter(cur_velocity)
 
-        self.set_lateral_velocity(cur_velocity)
+        #self.set_lateral_velocity(cur_velocity)
 
 
