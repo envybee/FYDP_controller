@@ -39,8 +39,8 @@ class InputFilter:
         return cur_velocity
 
     def error2vel_vision(self, error):
-        cur_velocity = cur_velocity * 150
-        return error
+        cur_velocity = error * 150
+        return cur_velocity
 
     def pid(self, target_vel = None):
         if target_vel is not None:
