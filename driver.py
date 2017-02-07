@@ -6,7 +6,7 @@ import sys
 from Queue import Queue
 from controller import ControllerLoop
 from recieve_inputs import Inputs
-
+from vision_subsystem import Vision_Subsystem
 
 def main():
     logger = logging.getLogger(__name__)
@@ -20,11 +20,14 @@ def main():
     # Initialize input handler
     inputs = Inputs(2, med_dist_queue, lat_dist_queue, logger)
 
+    vision = Vision_Subsystem(1, lat_dist_queue, logger, False)
+
     # Cleanup on Ctrl+C
     #signal.signal(signal.SIGINT, main.sigint_handler)
 
     cL.start()
-    inputs.start()
+    #inputs.start()
+    vision.start()
 
     def sigint_handler(signum, frame):
         cL.kill_received = True
