@@ -28,6 +28,8 @@ class Vision_Subsystem(threading.Thread):
 
         threading.Thread.__init__(self)
 
+        self.kill_received = False
+
 
     def getInitialRoiPts(self, frame):
 
@@ -115,7 +117,7 @@ class Vision_Subsystem(threading.Thread):
         roiPts = []
         roiImg = 0
 
-        while True:
+        while not self.kill_received:
 
             if rpi:
                 retval = True
@@ -164,7 +166,7 @@ class Vision_Subsystem(threading.Thread):
         # Provide the tracker the initial position of the object
         tracker.start_track(img, dlib.rectangle(*roiPts[0]))
 
-        while True:
+        while not self.kill_received:
 
             if rpi:
                 retval = True

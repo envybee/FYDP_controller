@@ -1,87 +1,68 @@
 import RPi.GPIO as GPIO
 import time
-import Queue
 import signal
-import sys
 import logging
 from controller import ControllerLoop
+import threading
 
-logger = logging.getLogger(__name__)
-
-dataQueue = Queue.Queue()
 newData = None
-
-cL = ControllerLoop(1, dataQueue, logger)
-
-def sigint_handler(signum, frame):
-    cL.kill_received = True
-    GPIO.cleanup()
-    sys.exit(0)
-
-
-GPIO.setmode(GPIO.BCM)
 
 TRIG = 23
 ECHO = 24
 
-logger.info("Starting Control Loop")
-cL.start()
 
-logger.info("Distance Measurement In Progress")
+class Ultrasonic(threading.Thread):
+    def __init__(self, threadID, med_data_value, logger):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
 
-GPIO.setup(TRIG,GPIO.OUT)
-GPIO.setup(ECHO,GPIO.IN)
+        GPIO.setmode(GPIO.BCM)
 
-GPIO.output(TRIG, False)
-logger.info("Waiting For Sensor To Settle")
+        self.med_data_value = med_data_value
+        self.logger = logger
 
-count = 0
+        logger.info("Distance Measurement In Progress")
 
-previous_time = time.time()
-height_diff = 0
-reference_distance = 30
-current_distance = 0
+        GPIO.setup(TRIG, GPIO.OUT)
+        GPIO.setup(ECHO, GPIO.IN)
 
-signal.signal(signal.SIGINT, sigint_handler)
+        GPIO.output(TRIG, False)
+        logger.info("Waiting For Sensor To Settle")
 
+        self.reference_distance = 30
 
-while True:
-	count+=1
+        self.kill_received = False
 
-	GPIO.output(TRIG, True)
-	time.sleep(0.00001)
-	GPIO.output(TRIG, False)
+    def run(self):
+        count = 0
+        while not self.kill_received:
+            count += 1
 
-	while GPIO.input(ECHO)==0:
-		logger.debug("waiting for pulse return")
-		pulse_start = time.time()
+            GPIO.output(TRIG, True)
+            time.sleep(0.00001)
+            GPIO.output(TRIG, False)
 
-	while GPIO.input(ECHO)==1:
-		logger.debug("Waiting for the pulse to go back down")
-		pulse_end = time.time()
+            while GPIO.input(ECHO) == 0:
+                self.logger.debug("waiting for pulse return")
+                pulse_start = time.time()
 
-	pulse_duration = pulse_end - pulse_start
+            while GPIO.input(ECHO) == 1:
+                self.logger.debug("Waiting for the pulse to go back down")
+                pulse_end = time.time()
 
-	distance = pulse_duration * 17150
+            pulse_duration = pulse_end - pulse_start
 
-	current_distance = round(distance, 2)
-	current_time = time.time()
-	time_diff = current_time - previous_time
-	distance_diff = current_distance - reference_distance
+            distance = pulse_duration * 17150
 
-	if(distance_diff > reference_distance*5):
-		logger.debug("continuing...")
-		continue
+            current_distance = round(distance, 2)
+            distance_diff = int(current_distance - self.reference_distance)
 
-	speed = float(distance_diff)/(time_diff*100)
-	                 
-	newData = (speed, current_time)
-	dataQueue.put(newData)
+            if (distance_diff > self.reference_distance * 5):
+                distance_diff = 0
 
-	previous_time = current_time
+            self.med_data_value[0] = distance_diff
 
-	logger.info("Iteration: ",count,"Distance diff:",distance_diff," cm","  Time Delta:",time_diff," sec")
-	time.sleep(0.05)
+            self.logger.info("Iteration: ", count, "Distance diff:", distance_diff, " cm")
+            time.sleep(0.05)
 
-cL.kill_received = True
-GPIO.cleanup()
+        GPIO.cleanup()
