@@ -43,30 +43,32 @@ GPIO.output(GPIO_TRIGGER, False)
 # Allow module to settle
 time.sleep(0.5)
 
-# Send 10us pulse to trigger
-GPIO.output(GPIO_TRIGGER, True)
-# Wait 10us
-time.sleep(0.00001)
-GPIO.output(GPIO_TRIGGER, False)
-start = time.time()
+while True:
 
-while GPIO.input(GPIO_ECHO)==0:
-  start = time.time()
+	# Send 10us pulse to trigger
+	GPIO.output(GPIO_TRIGGER, True)
+	# Wait 10us
+	time.sleep(0.00001)
+	GPIO.output(GPIO_TRIGGER, False)
+	start = time.time()
 
-while GPIO.input(GPIO_ECHO)==1:
-  stop = time.time()
+	while GPIO.input(GPIO_ECHO)==0:
+	  start = time.time()
 
-# Calculate pulse length
-elapsed = stop-start
+	while GPIO.input(GPIO_ECHO)==1:
+	  stop = time.time()
 
-# Distance pulse travelled in that time is time
-# multiplied by the speed of sound (cm/s)
-distance = elapsed * speedSound
+	# Calculate pulse length
+	elapsed = stop-start
 
-# That was the distance there and back so halve the value
-distance = distance / 2
+	# Distance pulse travelled in that time is time
+	# multiplied by the speed of sound (cm/s)
+	distance = elapsed * speedSound
 
-print("Distance : {0:5.1f}".format(distance))
+	# That was the distance there and back so halve the value
+	distance = distance / 2
+
+	print("Distance : {0:5.1f}".format(distance))
 
 # Reset GPIO settings
 GPIO.cleanup()
