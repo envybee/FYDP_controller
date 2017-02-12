@@ -35,6 +35,8 @@ class Ultrasonic(threading.Thread):
 
     def run(self):
         count = 0
+        pulse_start = 0
+        pulse_duration = 0
         while not self.kill_received:
             count += 1
 
@@ -42,27 +44,31 @@ class Ultrasonic(threading.Thread):
             time.sleep(0.00001)
             GPIO.output(TRIG, False)
 
+            self.logger.debug("waiting for pulse return")
             while GPIO.input(ECHO) == 0:
-                self.logger.debug("waiting for pulse return")
                 pulse_start = time.time()
 
+            self.logger.debug("Waiting for the pulse to go back down")
             while GPIO.input(ECHO) == 1:
-                self.logger.debug("Waiting for the pulse to go back down")
                 pulse_end = time.time()
+                pulse_duration = pulse_end - pulse_start
+                if pulse_duration > 0.01:
+                    break
 
-            pulse_duration = pulse_end - pulse_start
+            if pulse_duration > 0.01:
+                continue
+
+            self.logger.debug("Pulse duration: " + str(pulse_duration))
 
             distance = pulse_duration * 17150
 
             current_distance = round(distance, 2)
             distance_diff = int(current_distance - self.reference_distance)
 
-            if (distance_diff > self.reference_distance * 5):
-                distance_diff = 0
-
             self.med_data_value[0] = distance_diff
 
-            self.logger.info("Iteration: ", count, "Distance diff:", distance_diff, " cm")
+            self.logger.info("Iteration: " + str(count) + " Distance: " + str(current_distance)
+                             + "cm \nDistance diff:" + str(distance_diff) + " cm")
             time.sleep(0.05)
 
         GPIO.cleanup()

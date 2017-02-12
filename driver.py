@@ -8,6 +8,9 @@ from recieve_inputs import Inputs
 from vision_subsystem import Vision_Subsystem
 from range_sensor import Ultrasonic
 
+import threading
+
+from time import sleep
 
 def sigint_handler(signum, frame):
     cL.kill_received = True
@@ -38,12 +41,15 @@ if __name__ == "__main__":
     # Set threads to run in daemon mode so they can be killed
     cL.daemon = True
     # inputs.daemon = True
-    vision.daemon = True
+    #vision.daemon = True
     ultrasonic.daemon = True
 
     # Start all the threads
     cL.start()
     # inputs.start()
-    vision.start()
+    #vision.start()
     ultrasonic.start()
+
+    while threading.activeCount() > 0:
+        sleep(0.1)
 
