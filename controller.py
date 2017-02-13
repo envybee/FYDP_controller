@@ -124,7 +124,7 @@ class ControllerLoop(threading.Thread):
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.medial_filter(cur_velocity)
 
-        self.logger.debug("cur_velocity: " + str(self.cur_velocity))
+        self.logger.debug("cur_velocity: " + str(cur_velocity))
 
         #self.set_velocity(cur_velocity)
 
