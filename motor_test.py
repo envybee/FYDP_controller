@@ -16,30 +16,16 @@ from MotorController import MCInterface
 
 
 mc = MCInterface()
+mc.forwardM0(0)
+mc.forwardM1(0)
+#for i in range(0, 150, 10):
+#	mc.reverseM0(i)
+#	mc.forwardM1(i)
+#	time.sleep(10)
 time.sleep(1)
 mc.forwardM0(149)
-time.sleep(1)
-mc.forwardM0(0)
-time.sleep(1)
-mc.reverseM0(149)
-time.sleep(1)
-mc.reverseM0(0)
-time.sleep(1)
 mc.forwardM1(149)
-time.sleep(1)
+time.sleep(3)
+mc.forwardM0(0)
 mc.forwardM1(0)
-time.sleep(1)
-mc.reverseM1(149)
-time.sleep(1)
-mc.reverseM1(0)
 
-
-#mc.forwardM0(128)
-
-#time.sleep(1)
-
-#mc.forwardM1(249)
-
-#time.sleep(1)
-
-#mc.forwardM1(128)
