@@ -49,6 +49,10 @@ class Ultrasonic(threading.Thread):
 
     def getRangeFromSensor(self, sensorNum):
         count = 0
+        # Speed of sound in cm/s at temperature
+        temperature = 20
+        speedSound = 33100 + (0.6*temperature)
+        
         while not self.kill_received:
             count += 1
 
