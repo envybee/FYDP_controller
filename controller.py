@@ -86,7 +86,7 @@ class ControllerLoop(threading.Thread):
             else:
                 self.lateral_drive()
 
-            sleep(0.01)
+            sleep(10)
 
         self.stop()
 
@@ -110,11 +110,11 @@ class ControllerLoop(threading.Thread):
         self.logger.info("Lateral Drive!!!   --->" + str(cur_velocity))
         norm_vel = int(cur_velocity)
         if cur_velocity > 0:
-            for s in range(0, 15):
+            for s in range(10, 15):
                 self.mc.forwardM0(15 + norm_vel)
                 self.mc.reverseM1(15)
         else:
-            for s in range(0, 15):
+            for s in range(10, 15):
                 norm_vel = abs(int(cur_velocity))
                 self.mc.reverseM0(15)
                 self.mc.forwardM1(15 + norm_vel)
