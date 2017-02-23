@@ -47,7 +47,7 @@ class Ultrasonic(threading.Thread):
 
         GPIO.cleanup()
 
-    def getRangeFromSensor(sensorNum):
+    def getRangeFromSensor(self, sensorNum):
         count = 0
         while not self.kill_received:
             count += 1
