@@ -30,10 +30,10 @@ if __name__ == "__main__":
     lat_value = [0]
 
     # Initialize threads
-    #ultrasonic = Ultrasonic(3, med_value, logger)
+    ultrasonic = Ultrasonic(3, med_value, logger)
     cL = ControllerLoop(1, med_value, lat_value, logger)
     # inputs = Inputs(2, med_value, lat_value, logger)
-    vision = Vision_Subsystem(1, lat_value, logger, False)
+    #vision = Vision_Subsystem(1, lat_value, logger, False)
 
     # Cleanup on Ctrl+C
     signal.signal(signal.SIGINT, sigint_handler)
@@ -41,14 +41,14 @@ if __name__ == "__main__":
     # Set threads to run in daemon mode so they can be killed
     cL.daemon = True
     # inputs.daemon = True
-    vision.daemon = True
-    #ultrasonic.daemon = True
+    #vision.daemon = True
+    ultrasonic.daemon = True
 
     # Start all the threads
     cL.start()
     # inputs.start()
-    vision.start()
-    #ultrasonic.start()
+    #vision.start()
+    ultrasonic.start()
 
     while threading.activeCount() > 0:
         sleep(0.1)

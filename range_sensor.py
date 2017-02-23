@@ -7,6 +7,8 @@ import threading
 
 newData = None
 
+TRIG_Arr = [23, 16]
+ECHO_Arr = [24, 20]
 TRIG = 23
 ECHO = 24
 
@@ -23,10 +25,15 @@ class Ultrasonic(threading.Thread):
 
         logger.info("Distance Measurement In Progress")
 
-        GPIO.setup(TRIG, GPIO.OUT)
-        GPIO.setup(ECHO, GPIO.IN)
+        for TRIG in TRIG_Arr:
+            GPIO.setup(TRIG, GPIO.OUT)
 
-        GPIO.output(TRIG, False)
+        for ECHO in ECHO_Arr:
+            GPIO.setup(ECHO, GPIO.IN)
+
+        for TRIG in TRIG_Arr:
+            GPIO.output(TRIG, False)
+
         logger.info("Waiting For Sensor To Settle")
 
         self.reference_distance = 30
@@ -34,41 +41,44 @@ class Ultrasonic(threading.Thread):
         self.kill_received = False
 
     def run(self):
+        
+        self.getRangeFromSensor(0)
+        self.getRangeFromSensor(1)
+
+        GPIO.cleanup()
+
+    def getRangeFromSensor(sensorNum):
         count = 0
-        pulse_start = 0
-        pulse_duration = 0
         while not self.kill_received:
             count += 1
 
-            GPIO.output(TRIG, True)
+            # Send 10us pulse to trigger
+            GPIO.output(TRIG_Arr[sensorNum], True)
+            # Wait 10us
             time.sleep(0.00001)
-            GPIO.output(TRIG, False)
+            GPIO.output(TRIG_Arr[sensorNum], False)
+            start = time.time()
 
-            self.logger.debug("waiting for pulse return")
-            while GPIO.input(ECHO) == 0:
-                pulse_start = time.time()
+            while GPIO.input(ECHO_Arr[sensorNum])==0:
+              start = time.time()
 
-            self.logger.debug("Waiting for the pulse to go back down")
-            while GPIO.input(ECHO) == 1:
-                pulse_end = time.time()
-                pulse_duration = pulse_end - pulse_start
-                if pulse_duration > 0.01:
-                    break
+            while GPIO.input(ECHO_Arr[sensorNum])==1:
+              stop = time.time()
 
-            if pulse_duration > 0.01:
-                continue
+            # Calculate pulse length
+            elapsed = stop-start
 
-            self.logger.debug("Pulse duration: " + str(pulse_duration))
+            # Distance pulse travelled in that time is time
+            # multiplied by the speed of sound (cm/s)
+            distance = elapsed * speedSound
 
-            distance = pulse_duration * 17150
+            # That was the distance there and back so halve the value
+            distance = distance / 2
+            
+            #self.med_data_value[0] = distance
 
-            current_distance = round(distance, 2)
-            distance_diff = int(current_distance - self.reference_distance)
+            self.logger.info("Sensor " + str(sensorNum) + "Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
 
-            self.med_data_value[0] = distance_diff
+            time.sleep(0.8)
 
-            self.logger.info("Iteration: " + str(count) + " Distance: " + str(current_distance)
-                             + "cm \nDistance diff:" + str(distance_diff) + " cm")
-            time.sleep(0.05)
 
-        GPIO.cleanup()
