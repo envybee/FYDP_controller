@@ -86,7 +86,7 @@ class ControllerLoop(threading.Thread):
             else:
                 self.lateral_drive()
 
-            sleep(1)
+            sleep(0.01)
 
         self.stop()
 
@@ -110,12 +110,14 @@ class ControllerLoop(threading.Thread):
         self.logger.info("Lateral Drive!!!   --->" + str(cur_velocity))
         norm_vel = int(cur_velocity)
         if cur_velocity > 0:
-            self.mc.forwardM0(15 + norm_vel)
-            self.mc.reverseM1(15)
+            for s in range(0, 15):
+                self.mc.forwardM0(15 + norm_vel)
+                self.mc.reverseM1(15)
         else:
-            norm_vel = abs(int(cur_velocity))
-            self.mc.reverseM0(15)
-            self.mc.forwardM1(15 + norm_vel)
+            for s in range(0, 15):
+                norm_vel = abs(int(cur_velocity))
+                self.mc.reverseM0(15)
+                self.mc.forwardM1(15 + norm_vel)
 
     def medial_drive(self):
         self.logger.debug("Received med_value: " + str(self.med_value))
