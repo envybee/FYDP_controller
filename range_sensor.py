@@ -71,7 +71,7 @@ class Ultrasonic(threading.Thread):
 
             distToSend = int(min(distance, distance2))
 
-            if not isValid(distToSend):
+            if not self.isValid(distToSend):
                 continue
 
             distToSend = self.running_mean()
