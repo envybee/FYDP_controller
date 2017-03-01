@@ -48,10 +48,10 @@ class Ultrasonic(threading.Thread):
 
         return int(sma[len(sma) - 1])
 
-    def isValid(self, ind):
+    def isValid(self, ind, val):
         if ind < 1:
             return self.distanceValues[0]
-            
+
         df = self.distanceValues[ind] - self.distanceValues[ind - 1]
         speed = df/0.2
 
@@ -74,7 +74,7 @@ class Ultrasonic(threading.Thread):
 
             distToSend = int(min(distance, distance2))
 
-            if not self.isValid(distToSend):
+            if not self.isValid(ind, distToSend):
                 continue
 
             distToSend = self.running_mean()
