@@ -14,6 +14,8 @@ class Ultrasonic(threading.Thread):
     def __init__(self, threadID, med_data_value, logger):
         threading.Thread.__init__(self)
         self.threadID = threadID
+        self.distanceValues = []
+        self.avgSampleSize = 25
 
         GPIO.setmode(GPIO.BCM)
 
@@ -37,19 +39,42 @@ class Ultrasonic(threading.Thread):
 
         self.kill_received = False
 
+    def running_mean(self):
+        sum = 0
+        result = list( 0 for x in self.distanceValues)
+        N = self.avgSampleSize
+        for i in range( 0, N):
+            sum = sum + self.distanceValues[i]
+            result[i] = sum / (i+1)
+
+        for i in range(N, len(self.distanceValues)):
+            sum = sum - self.distanceValues[i-N] + self.distanceValues[i]
+            result[i] = sum / 
+
+        return result[N-1]
+
     def run(self):
         distance = 0 
         distance2 = 0
         count = 0
+        ind = 0
+        mean = 0
         while not self.kill_received:
+            ind = count % avgSampleSize
+
             distance = self.getRangeFromSensor(0)
             self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
 
             distance2 = self.getRangeFromSensor(1)
             self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
 
+            distToSend = int(min(distance, distance2))
+            self.med_data_value[0] = distToSend
 
-            self.med_data_value[0] = int(min(distance, distance2))
+            self.distanceValues[ind] = distToSend
+
+            mean = self.running_mean()
+            self.logger.info("Running Mean: " + str(mean))
 
             time.sleep(0.2)
             count = count + 1
