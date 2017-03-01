@@ -16,8 +16,8 @@ class Ultrasonic(threading.Thread):
     def __init__(self, threadID, med_data_value, logger):
         threading.Thread.__init__(self)
         self.threadID = threadID
-        self.distanceValues = []
         self.avgSampleSize = 25
+        self.distanceValues = [0 for x in range(self.avgSampleSize)]
 
         GPIO.setmode(GPIO.BCM)
 
