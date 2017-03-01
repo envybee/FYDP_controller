@@ -4,6 +4,8 @@ import signal
 import logging
 from controller import ControllerLoop
 import threading
+import numpy as np
+from numpy import convolve
 
 newData = None
 
@@ -40,18 +42,11 @@ class Ultrasonic(threading.Thread):
         self.kill_received = False
 
     def running_mean(self):
-        sum = 0
-        result = list( 0 for x in self.distanceValues)
-        N = self.avgSampleSize
-        for i in range( 0, N):
-            sum = sum + self.distanceValues[i]
-            result[i] = sum / (i+1)
+        window = 10
+        weights = np.repeat(1.0, window)/window
+        sma = np.convolve(self.distanceValues, weights, 'valid')
 
-        for i in range(N, len(self.distanceValues)):
-            sum = sum - self.distanceValues[i-N] + self.distanceValues[i]
-            result[i] = sum / 
-
-        return result[N-1]
+        return int(sma)
 
     def run(self):
         distance = 0 
