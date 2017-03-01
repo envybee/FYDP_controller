@@ -40,6 +40,7 @@ class Ultrasonic(threading.Thread):
     def run(self):
         distance = 0 
         distance2 = 0
+        count = 0
         while not self.kill_received:
             distance = self.getRangeFromSensor(0)
             self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
@@ -52,16 +53,15 @@ class Ultrasonic(threading.Thread):
             #self.med_data_value[0] = distance
 
             time.sleep(0.8)
+            cout = count + 1
 
         GPIO.cleanup()
 
     def getRangeFromSensor(self, sensorNum):
-        count = 0
+        
         # Speed of sound in cm/s at temperature
         temperature = 20
         speedSound = 33100 + (0.6*temperature)
-
-        count += 1
 
         # Send 10us pulse to trigger
         GPIO.output(TRIG_Arr[sensorNum], True)
