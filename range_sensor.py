@@ -46,7 +46,7 @@ class Ultrasonic(threading.Thread):
         weights = np.repeat(1.0, window)/window
         sma = np.convolve(self.distanceValues, weights, 'valid')
 
-        return int(sma)
+        return int(sma[len(sma) - 1])
 
     def run(self):
         distance = 0 
