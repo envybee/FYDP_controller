@@ -55,7 +55,7 @@ class Ultrasonic(threading.Thread):
         ind = 0
         mean = 0
         while not self.kill_received:
-            ind = count % avgSampleSize
+            ind = count % self.avgSampleSize
 
             distance = self.getRangeFromSensor(0)
             self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
