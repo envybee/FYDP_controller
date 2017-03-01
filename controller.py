@@ -86,7 +86,7 @@ class ControllerLoop(threading.Thread):
             else:
                 self.lateral_drive()
 
-            sleep(10)
+            sleep(0.2)
 
         self.stop()
 
