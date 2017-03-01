@@ -128,7 +128,7 @@ class ControllerLoop(threading.Thread):
 
         self.logger.debug("cur_velocity: " + str(cur_velocity))
 
-        #self.set_velocity(cur_velocity)
+        self.set_velocity(cur_velocity)
 
     def lateral_drive(self):
         error = self.lat_value[0]
