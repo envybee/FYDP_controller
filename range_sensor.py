@@ -48,6 +48,12 @@ class Ultrasonic(threading.Thread):
 
         return int(sma[len(sma) - 1])
 
+    def isValid(self, ind):
+        df = self.distanceValues[ind] - self.distanceValues[ind - 1]
+        speed = df/0.2
+
+        return speed < 250
+
     def run(self):
         distance = 0 
         distance2 = 0
@@ -64,12 +70,16 @@ class Ultrasonic(threading.Thread):
             self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
 
             distToSend = int(min(distance, distance2))
+
+            if not isValid(distToSend):
+                continue
+
+            distToSend = self.running_mean()
+            self.logger.info("Filtered Medial Value --> " + str(distToSend))
+
             self.med_data_value[0] = distToSend
 
             self.distanceValues[ind] = distToSend
-
-            mean = self.running_mean()
-            self.logger.info("Running Mean: " + str(mean))
 
             time.sleep(0.2)
             count = count + 1
