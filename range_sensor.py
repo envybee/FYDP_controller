@@ -49,6 +49,9 @@ class Ultrasonic(threading.Thread):
         return int(sma[len(sma) - 1])
 
     def isValid(self, ind):
+        if ind < 1:
+            return self.distanceValues[0]
+            
         df = self.distanceValues[ind] - self.distanceValues[ind - 1]
         speed = df/0.2
 
