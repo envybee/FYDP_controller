@@ -45,7 +45,7 @@ class Ultrasonic(threading.Thread):
             distance = self.getRangeFromSensor(0)
             self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
 
-            sleep(0.8)
+            time.sleep(0.8)
 
             distance2 = self.getRangeFromSensor(1)
             self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
