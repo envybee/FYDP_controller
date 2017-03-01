@@ -1,11 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 import signal
-import logging
 from controller import ControllerLoop
 import threading
 import numpy as np
-from numpy import convolve
 
 newData = None
 
