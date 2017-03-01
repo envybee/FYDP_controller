@@ -38,10 +38,20 @@ class Ultrasonic(threading.Thread):
         self.kill_received = False
 
     def run(self):
-        
+        distance = 0 
+        distance2 = 0
         while not self.kill_received:
-            self.getRangeFromSensor(0)
-            self.getRangeFromSensor(1)
+            distance = self.getRangeFromSensor(0)
+            self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
+
+            sleep(0.8)
+
+            distance2 = self.getRangeFromSensor(1)
+            self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
+
+            #self.med_data_value[0] = distance
+
+            time.sleep(0.8)
 
         GPIO.cleanup()
 
@@ -76,10 +86,7 @@ class Ultrasonic(threading.Thread):
         # That was the distance there and back so halve the value
         distance = distance / 2
         
-        #self.med_data_value[0] = distance
-
-        self.logger.info("Sensor " + str(sensorNum) + "Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
-
-        time.sleep(0.8)
+        return distance
+        
 
 
