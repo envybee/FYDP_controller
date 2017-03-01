@@ -45,15 +45,13 @@ class Ultrasonic(threading.Thread):
             distance = self.getRangeFromSensor(0)
             self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
 
-            time.sleep(0.8)
-
             distance2 = self.getRangeFromSensor(1)
             self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
 
 
             self.med_data_value[0] = int(min(distance, distance2))
 
-            time.sleep(0.8)
+            time.sleep(0.2)
             count = count + 1
 
         GPIO.cleanup()
