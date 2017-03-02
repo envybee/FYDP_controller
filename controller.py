@@ -22,7 +22,7 @@ class InputFilter:
         self.output_threshold = 5
 
     def medial_filter(self, target_vel = None):
-        self.logger.info("PID output: " + str(self.pid(target_vel)))
+        self.logger.debug("PID output: " + str(self.pid(target_vel)))
 
         if target_vel is None:
             return 0
@@ -51,12 +51,12 @@ class InputFilter:
 
         error = self.target_vel - self.cur_vel
 
-        self.logger.info("Error: " + str(error) + ", Target Value: " + str(target_vel))
+        self.logger.debug("Error: " + str(error) + ", Target Value: " + str(target_vel))
 
         diff_error = error / self.deltaT
         int_error = (error * self.deltaT)
 
-        self.logger.info("Diff Error: " + str(diff_error) + ", Int Error: " + str(int_error))
+        self.logger.debug("Diff Error: " + str(diff_error) + ", Int Error: " + str(int_error))
 
         self.cur_vel = self.cur_vel + self.Kp * error + self.Kd * diff_error + self.Ki * int_error
         self.cur_vel = int(self.cur_vel)
@@ -103,11 +103,11 @@ class ControllerLoop(threading.Thread):
             self.mc.forwardM0(norm_vel)
             self.mc.forwardM1(norm_vel)
 
-        self.logger.info("Tuned & normalized velocity  " + str(cur_velocity))
+        self.logger.debug("Tuned & normalized velocity  " + str(cur_velocity))
 
     def set_lateral_velocity(self, cur_velocity):
 
-        self.logger.info("Lateral Drive!!!   --->" + str(cur_velocity))
+        self.logger.debug("Lateral Drive!!!   --->" + str(cur_velocity))
         norm_vel = int(cur_velocity)
         if cur_velocity > 0:
             for s in range(10, 15):
@@ -133,7 +133,7 @@ class ControllerLoop(threading.Thread):
     def lateral_drive(self):
         error = self.lat_value[0]
 
-        self.logger.info("Received lat_value: " + str(error))
+        self.logger.debug("Received lat_value: " + str(error))
         cur_velocity = self.input_filter.error2vel_vision(error)
         cur_velocity = self.input_filter.lateral_filter(cur_velocity)
 
