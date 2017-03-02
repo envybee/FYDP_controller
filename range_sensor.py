@@ -48,11 +48,11 @@ class Ultrasonic(threading.Thread):
 
 
     def isValid(self, cur_value, prev):
-        
+
         df = abs(cur_value - prev)
         speed = df/0.2
 
-        return speed < 250
+        return speed < 100
 
     def run(self):
         count = 0
@@ -69,6 +69,10 @@ class Ultrasonic(threading.Thread):
 
             distToSend = int(min(distance, distance2))
 
+            if prev == 0:
+                prev = distToSend
+                continue
+                
             if not self.isValid(distToSend, prev):
                 self.logger.info("--SKIPPED--")    
                 continue
@@ -82,6 +86,7 @@ class Ultrasonic(threading.Thread):
             time.sleep(0.2)
 
             prev = distToSend
+
         GPIO.cleanup()
 
     def getRangeFromSensor(self, sensorNum):
