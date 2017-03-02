@@ -1,11 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 import signal
-import logging
 from controller import ControllerLoop
 import threading
 import numpy as np
-from numpy import convolve
 
 newData = None
 
@@ -48,11 +46,12 @@ class Ultrasonic(threading.Thread):
 
         return int(sma[len(sma) - 1])
 
-    def isValid(self, ind, val):
+
+    def isValid(self, cur_value, ind):
         if ind < 1:
             return self.distanceValues[0]
-
-        df = self.distanceValues[ind] - self.distanceValues[ind - 1]
+            
+        df = cur_value - self.distanceValues[ind - 1]
         speed = df/0.2
 
         return speed < 250
@@ -74,14 +73,13 @@ class Ultrasonic(threading.Thread):
 
             distToSend = int(min(distance, distance2))
 
-            if not self.isValid(ind, distToSend):
+            if not self.isValid(distToSend, ind):
                 continue
 
             distToSend = self.running_mean()
             self.logger.info("Filtered Medial Value --> " + str(distToSend))
 
             self.med_data_value[0] = distToSend
-
             self.distanceValues[ind] = distToSend
 
             time.sleep(0.2)
@@ -101,9 +99,11 @@ class Ultrasonic(threading.Thread):
         time.sleep(0.00001)
         GPIO.output(TRIG_Arr[sensorNum], False)
         start = time.time()
+        stop = time.time()
 
         while GPIO.input(ECHO_Arr[sensorNum])==0:
           start = time.time()
+          stop = time.time()
 
         while GPIO.input(ECHO_Arr[sensorNum])==1:
           stop = time.time()
