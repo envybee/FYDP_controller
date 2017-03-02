@@ -48,22 +48,23 @@ class Ultrasonic(threading.Thread):
 
 
     def isValid(self, cur_value, ind):
+        if ind < 1 and self.distanceValues[self.avgSampleSize-1] == 0:
+            return True
+
+        idx = ind - 1
         if ind < 1:
-            return self.distanceValues[0]
-            
-        df = cur_value - self.distanceValues[ind - 1]
+            idx = self.avgSampleSize - 1
+
+        df = cur_value - self.distanceValues[idx]
         speed = df/0.2
 
         return speed < 250
 
     def run(self):
-        distance = 0 
-        distance2 = 0
         count = 0
-        ind = 0
-        mean = 0
         while not self.kill_received:
             ind = count % self.avgSampleSize
+            count += 1
 
             distance = self.getRangeFromSensor(0)
             self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
@@ -83,7 +84,6 @@ class Ultrasonic(threading.Thread):
             self.distanceValues[ind] = distToSend
 
             time.sleep(0.2)
-            count = count + 1
 
         GPIO.cleanup()
 
