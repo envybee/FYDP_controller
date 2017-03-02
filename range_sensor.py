@@ -50,11 +50,10 @@ class Ultrasonic(threading.Thread):
     def isValid(self, cur_value, prev):
 
         df = abs(cur_value - prev)
-        speed = df/0.2
 
         self.logger.info("speed ->" + str(speed))
 
-        return speed < 100
+        return df < 50
 
     def run(self):
         count = 0
@@ -85,7 +84,7 @@ class Ultrasonic(threading.Thread):
             self.med_data_value[0] = distToSend
             #self.distanceValues[ind] = distToSend
 
-            time.sleep(0.2)
+            time.sleep(0.5)
 
             prev = distToSend
 
