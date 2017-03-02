@@ -52,6 +52,8 @@ class Ultrasonic(threading.Thread):
         df = abs(cur_value - prev)
         speed = df/0.2
 
+        self.logger.info("speed ->" + str(speed))
+
         return speed < 100
 
     def run(self):
@@ -72,7 +74,7 @@ class Ultrasonic(threading.Thread):
             if prev == 0:
                 prev = distToSend
                 continue
-                
+
             if not self.isValid(distToSend, prev):
                 self.logger.info("--SKIPPED--")    
                 continue
