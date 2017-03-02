@@ -51,7 +51,7 @@ class Ultrasonic(threading.Thread):
 
         df = abs(cur_value - prev)
 
-        self.logger.info("speed ->" + str(speed))
+        self.logger.info("speed ->" + str(df))
 
         return df < 50
 
