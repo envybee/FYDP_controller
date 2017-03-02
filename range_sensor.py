@@ -48,9 +48,7 @@ class Ultrasonic(threading.Thread):
 
 
     def isValid(self, cur_value, prev):
-        if prev == 0:
-            return True
-
+        
         df = abs(cur_value - prev)
         speed = df/0.2
 
