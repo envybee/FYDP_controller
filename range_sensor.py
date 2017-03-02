@@ -15,7 +15,7 @@ class Ultrasonic(threading.Thread):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.avgSampleSize = 25
-        self.distanceValues = [0 for x in range(self.avgSampleSize)]
+        #self.distanceValues = [0 for x in range(self.avgSampleSize)]
 
         GPIO.setmode(GPIO.BCM)
 
@@ -39,31 +39,28 @@ class Ultrasonic(threading.Thread):
 
         self.kill_received = False
 
-    def running_mean(self):
+    '''def running_mean(self):
         window = 10
         weights = np.repeat(1.0, window)/window
         sma = np.convolve(self.distanceValues, weights, 'valid')
 
-        return int(sma[len(sma) - 1])
+        return int(sma[len(sma) - 1])'''
 
 
-    def isValid(self, cur_value, ind):
-        if ind < 1 and self.distanceValues[self.avgSampleSize-1] == 0:
+    def isValid(self, cur_value, prev):
+        if prev == 0:
             return True
 
-        idx = ind - 1
-        if ind < 1:
-            idx = self.avgSampleSize - 1
-
-        df = cur_value - self.distanceValues[idx]
+        df = abs(cur_value - prev)
         speed = df/0.2
 
         return speed < 250
 
     def run(self):
         count = 0
+        prev = 0
         while not self.kill_received:
-            ind = count % self.avgSampleSize
+            #ind = count % self.avgSampleSize
             count += 1
 
             distance = self.getRangeFromSensor(0)
@@ -74,17 +71,18 @@ class Ultrasonic(threading.Thread):
 
             distToSend = int(min(distance, distance2))
 
-            if not self.isValid(distToSend, ind):
+            if not self.isValid(distToSend, prev):
                 continue
 
-            distToSend = self.running_mean()
-            self.logger.info("Filtered Medial Value --> " + str(distToSend))
+            #distToSend = self.running_mean()
+            self.logger.info("Medial Value --> " + str(distToSend))
 
             self.med_data_value[0] = distToSend
-            self.distanceValues[ind] = distToSend
+            #self.distanceValues[ind] = distToSend
 
             time.sleep(0.2)
 
+            prev = distToSend
         GPIO.cleanup()
 
     def getRangeFromSensor(self, sensorNum):
