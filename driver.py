@@ -7,6 +7,7 @@ from controller import ControllerLoop
 from recieve_inputs import Inputs
 from vision_subsystem import Vision_Subsystem
 from range_sensor import Ultrasonic
+from bluetooth_interface import Bluetooth
 
 import threading
 
@@ -16,6 +17,7 @@ def sigint_handler(signum, frame):
     cL.kill_received = True
     #vision.kill_received = True
     ultrasonic.kill_received = True
+    bt_interface.kill_received = True
 
     sys.exit(0)
 
@@ -29,9 +31,12 @@ if __name__ == "__main__":
     med_value = [0]
     lat_value = [0]
 
+    bt_signal = [False]
+
     # Initialize threads
-    ultrasonic = Ultrasonic(3, med_value, logger)
-    cL = ControllerLoop(1, med_value, lat_value, logger)
+    bt_interface = Bluetooth(logger, bt_signal)
+    ultrasonic = Ultrasonic(3, med_value, logger, bt_signal)
+    cL = ControllerLoop(1, med_value, lat_value, logger, bt_signal)
     # inputs = Inputs(2, med_value, lat_value, logger)
     #vision = Vision_Subsystem(1, lat_value, logger, False)
 
@@ -43,8 +48,10 @@ if __name__ == "__main__":
     # inputs.daemon = True
     #vision.daemon = True
     ultrasonic.daemon = True
+    bt_interface.daemon = True
 
     # Start all the threads
+    bt_interface.start()
     cL.start()
     # inputs.start()
     #vision.start()

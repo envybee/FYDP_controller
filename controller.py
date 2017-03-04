@@ -65,8 +65,10 @@ class InputFilter:
 
 
 class ControllerLoop(threading.Thread):
-    def __init__(self, threadID, med_value, lat_value, logger):
+    def __init__(self, threadID, med_value, lat_value, logger, bt_signal):
         self.logger = logger
+
+        self.bt_signal = bt_signal
 
         threading.Thread.__init__(self)
         self.threadID = threadID
@@ -79,7 +81,7 @@ class ControllerLoop(threading.Thread):
         self.kill_received = False
 
     def run(self):
-        while not self.kill_received:
+        while not self.kill_received and not self.bt_signal[0]:
 
             if self.lat_value[0] == 0:
                 self.medial_drive()
@@ -89,6 +91,9 @@ class ControllerLoop(threading.Thread):
             sleep(0.01)
 
         self.stop()
+
+        sleep(0.1)
+        self.run()
 
     def stop(self):
         self.mc.forwardM0(0)
