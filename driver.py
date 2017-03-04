@@ -26,7 +26,7 @@ if __name__ == "__main__":
     file_hdlr = logging.FileHandler('/var/log/controller.log')
     logger.addHandler(file_hdlr)
 
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.INFO)
 
     med_value = [0]
     lat_value = [0]
