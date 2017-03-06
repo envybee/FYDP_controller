@@ -53,7 +53,7 @@ class Ultrasonic(threading.Thread):
 
         self.logger.info("speed ->" + str(df))
 
-        return df < 50
+        return df < 50 or cur_value > 300
 
     def run(self):
         count = 0
@@ -84,7 +84,7 @@ class Ultrasonic(threading.Thread):
             self.med_data_value[0] = distToSend
             #self.distanceValues[ind] = distToSend
 
-            time.sleep(0.5)
+            time.sleep(0.3)
 
             prev = distToSend
 
