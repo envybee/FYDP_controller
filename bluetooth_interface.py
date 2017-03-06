@@ -12,6 +12,7 @@ class Bluetooth(threading.Thread):
         self.server_sock.listen(1)
 
         self.kill_received = False
+        threading.Thread.__init__(self)
 
         port = self.server_sock.getsockname()[1]
 
@@ -34,14 +35,14 @@ class Bluetooth(threading.Thread):
             while not self.kill_received:
                 data = self.client_sock.recv(1024)
                 if len(data) == 0: break
-                if self.data.upper() == "FALSE":
+                if data.upper() == "FALSE":
                     self.data[0] = False
                 else:
                     self.data[0] = True
 
                 self.logger.warn("received [%s]" % self.data[0])
-        except IOError:
-            pass
+        except Exception as e:
+            self.logger.info(str(e))
 
         self.logger.info("disconnected")
 
