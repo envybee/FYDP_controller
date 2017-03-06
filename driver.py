@@ -60,3 +60,4 @@ if __name__ == "__main__":
     while threading.activeCount() > 0:
         sleep(0.1)
 
+    logger.info("Exiting")

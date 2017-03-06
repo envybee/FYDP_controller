@@ -92,8 +92,10 @@ class ControllerLoop(threading.Thread):
 
         self.stop()
 
-        sleep(0.1)
-        self.run()
+        if not self.kill_received:
+            self.logger.info("Paused")
+            sleep(0.1)
+            self.run()
 
     def stop(self):
         self.mc.forwardM0(0)
