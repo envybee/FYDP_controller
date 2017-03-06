@@ -17,7 +17,7 @@ def sigint_handler(signum, frame):
     cL.kill_received = True
     #vision.kill_received = True
     ultrasonic.kill_received = True
-    bt_interface.kill_received = True
+    #bt_interface.kill_received = True
 
     sys.exit(0)
 
