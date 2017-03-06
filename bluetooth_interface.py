@@ -27,7 +27,7 @@ class Bluetooth(threading.Thread):
         self.logger.info("Waiting for connection on RFCOMM channel %d" % port)
 
         self.client_sock, client_info = self.server_sock.accept()
-        self.logger.info("Accepted connection from ", client_info)
+        self.logger.info("Accepted connection from " + str(client_info))
 
     def run(self):
         try:
