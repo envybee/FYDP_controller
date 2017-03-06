@@ -55,7 +55,7 @@ class Ultrasonic(threading.Thread):
 
         self.logger.info("speed ->" + str(df))
 
-        return df < 50
+        return df < 50 or cur_value > 300
 
     def run(self):
         count = 0
@@ -63,12 +63,19 @@ class Ultrasonic(threading.Thread):
         while not self.kill_received:
             #ind = count % self.avgSampleSize
             count += 1
+            try:
+                distance = self.getRangeFromSensor(0)
+                self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
 
-            distance = self.getRangeFromSensor(0)
-            self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
+            except Exception e:
+                self.logger.info("Sensor " + str(1) + " Crashed: " + str(e))
 
-            distance2 = self.getRangeFromSensor(1)
-            self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
+            try:
+                distance2 = self.getRangeFromSensor(1)
+                self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
+
+            except (Exception e):
+                self.logger.info("Sensor " + str(1) + " Crashed: " + str(e))
 
             distToSend = int(min(distance, distance2))
 
@@ -86,7 +93,7 @@ class Ultrasonic(threading.Thread):
             self.med_data_value[0] = distToSend
             #self.distanceValues[ind] = distToSend
 
-            time.sleep(0.5)
+            time.sleep(0.3)
 
             prev = distToSend
 
