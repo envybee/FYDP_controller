@@ -96,11 +96,11 @@ class ControllerLoop(threading.Thread):
 
     def set_velocity(self, cur_velocity):
         if cur_velocity > 0:
-            self.mc.reverseM0(cur_velocity)
+            self.mc.forwardM0(cur_velocity)
             self.mc.reverseM1(cur_velocity)
         else:
             norm_vel = abs(int(2*cur_velocity))
-            self.mc.forwardM0(norm_vel)
+            self.mc.reverseM0(norm_vel)
             self.mc.forwardM1(norm_vel)
 
         self.logger.debug("Tuned & normalized velocity  " + str(cur_velocity))
@@ -111,12 +111,12 @@ class ControllerLoop(threading.Thread):
         norm_vel = int(cur_velocity)
         if cur_velocity > 0:
             for s in range(10, 15):
-                self.mc.forwardM0(15 + norm_vel)
+                self.mc.reverseM0(15 + norm_vel)
                 self.mc.reverseM1(15)
         else:
             for s in range(10, 15):
                 norm_vel = abs(int(cur_velocity))
-                self.mc.reverseM0(15)
+                self.mc.forwardM0(15)
                 self.mc.forwardM1(15 + norm_vel)
 
     def medial_drive(self):
