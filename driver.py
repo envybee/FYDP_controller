@@ -31,10 +31,10 @@ if __name__ == "__main__":
     med_value = [0]
     lat_value = [0]
 
-    bt_signal = [False]
+    bt_signal = [True]
 
     # Initialize threads
-    bt_interface = Bluetooth(logger, bt_signal)
+    #bt_interface = Bluetooth(logger, bt_signal)
     ultrasonic = Ultrasonic(3, med_value, logger, bt_signal)
     cL = ControllerLoop(1, med_value, lat_value, logger, bt_signal)
     # inputs = Inputs(2, med_value, lat_value, logger)
@@ -48,10 +48,10 @@ if __name__ == "__main__":
     # inputs.daemon = True
     #vision.daemon = True
     ultrasonic.daemon = True
-    bt_interface.daemon = True
+    #bt_interface.daemon = True
 
     # Start all the threads
-    bt_interface.start()
+    #bt_interface.start()
     cL.start()
     # inputs.start()
     #vision.start()
