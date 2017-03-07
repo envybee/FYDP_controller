@@ -37,7 +37,7 @@ class Ultrasonic(threading.Thread):
 
         logger.info("Waiting For Sensor To Settle")
 
-        self.reference_distance = 30
+        self.reference_distance = 50
 
         self.kill_received = False
 
@@ -90,10 +90,10 @@ class Ultrasonic(threading.Thread):
             #distToSend = self.running_mean()
             self.logger.info("Medial Value --> " + str(distToSend))
 
-            self.med_data_value[0] = distToSend
+            self.med_data_value[0] = distToSend - self.reference_distance
             #self.distanceValues[ind] = distToSend
 
-            time.sleep(0.3)
+            time.sleep(0.1)
 
             prev = distToSend
 

@@ -14,15 +14,15 @@ class InputFilter:
         self.cur_vel = 0
 
         self.Kp = 0.6
-        self.Ki = 0.7
+        self.Ki = 0.07
         self.Kd = 0.03
 
         self.deltaT = 0.1
 
-        self.output_threshold = 5
+        self.output_threshold = 20
 
     def medial_filter(self, target_vel = None):
-        self.logger.debug("PID output: " + str(self.pid(target_vel)))
+        self.logger.info("PID output: " + str(self.pid(target_vel)))
 
         if target_vel is None:
             return 0
@@ -106,7 +106,7 @@ class ControllerLoop(threading.Thread):
             self.mc.forwardM0(cur_velocity)
             self.mc.reverseM1(cur_velocity)
         else:
-            norm_vel = abs(int(2*cur_velocity))
+            norm_vel = abs(cur_velocity)
             self.mc.reverseM0(norm_vel)
             self.mc.forwardM1(norm_vel)
 
