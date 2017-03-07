@@ -53,7 +53,7 @@ class Ultrasonic(threading.Thread):
 
         df = abs(cur_value - prev)
 
-        self.logger.info("speed ->" + str(df))
+        self.logger.info("distance diff ->" + str(df))
 
         return df < 50 or cur_value > 300
 
@@ -67,14 +67,14 @@ class Ultrasonic(threading.Thread):
                 distance = self.getRangeFromSensor(0)
                 self.logger.info("Sensor " + str(1) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance))
 
-            except Exception e:
+            except Exception as e:
                 self.logger.info("Sensor " + str(1) + " Crashed: " + str(e))
 
             try:
                 distance2 = self.getRangeFromSensor(1)
                 self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
 
-            except (Exception e):
+            except Exception as e:
                 self.logger.info("Sensor " + str(1) + " Crashed: " + str(e))
 
             distToSend = int(min(distance, distance2))
@@ -112,13 +112,24 @@ class Ultrasonic(threading.Thread):
         GPIO.output(TRIG_Arr[sensorNum], False)
         start = time.time()
         stop = time.time()
-
+        start1 = time.time()
+        
+        self.logger.info("Sending...")
         while GPIO.input(ECHO_Arr[sensorNum])==0:
           start = time.time()
           stop = time.time()
+          if stop - start1 > 1:
+            self.logger.info("Sending TimeOut")
+            return 99999
 
+        
+        start2 = time.time()
+        self.logger.info("Receiving...")
         while GPIO.input(ECHO_Arr[sensorNum])==1:
           stop = time.time()
+          if stop - start2 > 1:
+            self.logger.info("Receiving TimeOut")
+            return 99999
 
         # Calculate pulse length
         elapsed = stop-start

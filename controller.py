@@ -81,7 +81,7 @@ class ControllerLoop(threading.Thread):
         self.kill_received = False
 
     def run(self):
-        while not self.kill_received and not self.bt_signal[0]:
+        while not self.kill_received and self.bt_signal[0]:
 
             if self.lat_value[0] == 0:
                 self.medial_drive()
