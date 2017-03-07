@@ -103,11 +103,13 @@ class ControllerLoop(threading.Thread):
         self.mc.forwardM1(0)
 
     def set_velocity(self, cur_velocity):
-        if cur_velocity > 0:
-            self.mc.forwardM0(cur_velocity)
-            self.mc.reverseM1(cur_velocity)
+        base = 5
+        norm_vel = int(base*round(float(cur_velocity)/base))
+        if norm_vel > 0:
+            self.mc.forwardM0(norm_vel)
+            self.mc.reverseM1(norm_vel)
         else:
-            norm_vel = abs(cur_velocity)
+            norm_vel = abs(norm_vel)
             self.mc.reverseM0(norm_vel)
             self.mc.forwardM1(norm_vel)
 
