@@ -13,21 +13,22 @@ class InputFilter:
         self.target_vel = 0
         self.cur_vel = 0
 
-        self.Kp = 0.6
-        self.Ki = 0.07
-        self.Kd = 0.03
+        self.Kp = 1.5
+        self.Ki = 0
+        self.Kd = 0
 
         self.deltaT = 0.1
 
-        self.output_threshold = 20
+        self.output_threshold = 15
 
     def medial_filter(self, target_vel = None):
-        self.logger.info("PID output: " + str(self.pid(target_vel)))
+        pid_value = self.pid(target_vel)
+        self.logger.info("PID output: " + str(pid_value))
 
         if target_vel is None:
             return 0
 
-        return self.check_thresholds(target_vel)
+        return self.check_thresholds(pid_value)
 
     def lateral_filter(self, target_vel):
         return self.check_thresholds(target_vel)
@@ -127,15 +128,27 @@ class ControllerLoop(threading.Thread):
                 self.mc.forwardM1(15 + norm_vel)
 
     def medial_drive(self):
-        self.logger.debug("Received med_value: " + str(self.med_value))
+        self.logger.info("Received med_value: " + str(self.med_value))
         error = self.med_value[0]
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.medial_filter(cur_velocity)
+ 
+        self.logger.info("cur_velocity: " + str(cur_velocity))
 
-        self.logger.debug("cur_velocity: " + str(cur_velocity))
-
-        self.set_velocity(cur_velocity)
+        self.input_filter.cur_vel = cur_velocity
+        
+        if cur_velocity > 0 and cur_velocity < 50: 
+              self.set_velocity(30)
+        elif cur_velocity > 50 and cur_velocity < 100:
+            for s in range(30, cur_velocity, 10): 
+              self.set_velocity(s)
+        elif cur_velocity > 100 and cur_velocity < 200:
+            for s in range(100, cur_velocity, 20): 
+              self.set_velocity(s)
+        else:
+            self.set_velocity(0)
+        #self.set_velocity(cur_velocity)
 
     def lateral_drive(self):
         error = self.lat_value[0]
