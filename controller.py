@@ -13,7 +13,7 @@ class InputFilter:
         self.target_vel = 0
         self.cur_vel = 0
 
-        self.Kp = 1.5
+        self.Kp = 1
         self.Ki = 0
         self.Kd = 0
 
@@ -138,10 +138,10 @@ class ControllerLoop(threading.Thread):
 
         self.input_filter.cur_vel = cur_velocity
         
-        if cur_velocity > 0 and cur_velocity < 50: 
-              self.set_velocity(30)
-        elif cur_velocity > 50 and cur_velocity < 100:
-            for s in range(30, cur_velocity, 10): 
+        if cur_velocity > 0 and cur_velocity < 100: 
+              self.set_velocity(60)
+        elif cur_velocity > 100 and cur_velocity < 200:
+            for s in range(100, cur_velocity, 10): 
               self.set_velocity(s)
         elif cur_velocity > 100 and cur_velocity < 200:
             for s in range(100, cur_velocity, 20): 
