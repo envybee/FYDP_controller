@@ -103,11 +103,13 @@ class ControllerLoop(threading.Thread):
         self.mc.forwardM1(0)
 
     def set_velocity(self, cur_velocity):
-        if cur_velocity > 0:
-            self.mc.forwardM0(cur_velocity)
-            self.mc.reverseM1(cur_velocity)
+        base = 1
+        norm_vel = int(base*round(float(cur_velocity)/base))
+        if norm_vel > 0:
+            self.mc.forwardM0(norm_vel)
+            self.mc.reverseM1(norm_vel)
         else:
-            norm_vel = abs(cur_velocity)
+            norm_vel = abs(int(1.5 * norm_vel))
             self.mc.reverseM0(norm_vel)
             self.mc.forwardM1(norm_vel)
 
@@ -133,22 +135,11 @@ class ControllerLoop(threading.Thread):
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.medial_filter(cur_velocity)
- 
+
         self.logger.info("cur_velocity: " + str(cur_velocity))
 
         self.input_filter.cur_vel = cur_velocity
-        
-        if cur_velocity > 0 and cur_velocity < 100: 
-              self.set_velocity(60)
-        elif cur_velocity > 100 and cur_velocity < 200:
-            for s in range(100, cur_velocity, 10): 
-              self.set_velocity(s)
-        elif cur_velocity > 100 and cur_velocity < 200:
-            for s in range(100, cur_velocity, 20): 
-              self.set_velocity(s)
-        else:
-            self.set_velocity(0)
-        #self.set_velocity(cur_velocity)
+        self.set_velocity(cur_velocity)
 
     def lateral_drive(self):
         error = self.lat_value[0]
