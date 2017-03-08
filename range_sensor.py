@@ -37,7 +37,7 @@ class Ultrasonic(threading.Thread):
 
         logger.info("Waiting For Sensor To Settle")
 
-        self.reference_distance = 50
+        self.reference_distance = 70
 
         self.kill_received = False
 

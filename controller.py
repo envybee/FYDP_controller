@@ -19,7 +19,7 @@ class InputFilter:
 
         self.deltaT = 0.1
 
-        self.output_threshold = 15
+        self.output_threshold = 10
 
     def medial_filter(self, target_vel = None):
         pid_value = self.pid(target_vel)
@@ -140,18 +140,18 @@ class ControllerLoop(threading.Thread):
 
         self.input_filter.cur_vel = cur_velocity
         if cur_velocity > 0 and cur_velocity < 100: 
-              self.set_velocity(50)
+              self.set_velocity(60)
         elif cur_velocity > 100 and cur_velocity < 200:
             for s in range(100, cur_velocity, 10): 
               self.set_velocity(s)
         elif cur_velocity > 100 and cur_velocity < 200:
             for s in range(100, cur_velocity, 20): 
               self.set_velocity(s)
-        elif cur_velocity < 0 and cur_velocity > -100:
-            for s in range(0, -50, -20): 
+        elif cur_velocity < 0 and cur_velocity > -15:
+            for s in range(0, -60, -20): 
               self.set_velocity(s)
-        elif cur_velocity < -100 and cur_velocity > -200:
-            for s in range(0, -100, -30): 
+        elif cur_velocity < -15 and cur_velocity > -200:
+            for s in range(0, -50, -30): 
               self.set_velocity(s)
         else:
             self.set_velocity(0)
