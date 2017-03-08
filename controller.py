@@ -13,7 +13,7 @@ class InputFilter:
         self.target_vel = 0
         self.cur_vel = 0
 
-        self.Kp = 1
+        self.Kp = 2
         self.Ki = 0
         self.Kd = 0
 
@@ -139,7 +139,23 @@ class ControllerLoop(threading.Thread):
         self.logger.info("cur_velocity: " + str(cur_velocity))
 
         self.input_filter.cur_vel = cur_velocity
-        self.set_velocity(cur_velocity)
+        
+        if cur_velocity > 0 and cur_velocity < 100: 
+              self.set_velocity(60)
+        elif cur_velocity > 100 and cur_velocity < 200:
+            for s in range(100, cur_velocity, 10): 
+              self.set_velocity(s)
+        elif cur_velocity > 100 and cur_velocity < 200:
+            for s in range(100, cur_velocity, 20): 
+              self.set_velocity(s)
+        elif cur_velocity < 0 and cur_velocity > -15:
+            for s in range(0, -60, -20): 
+              self.set_velocity(s)
+        elif cur_velocity < -15 and cur_velocity > -200:
+            for s in range(0, -50, -30): 
+              self.set_velocity(s)
+        else:
+            self.set_velocity(0)
 
     def lateral_drive(self):
         error = self.lat_value[0]

@@ -14,7 +14,7 @@ class Ultrasonic(threading.Thread):
     def __init__(self, threadID, med_data_value, logger, bt_signal):
         threading.Thread.__init__(self)
         self.threadID = threadID
-        self.window_size = 10
+        self.window_size = 5
         #self.distanceValues = [0 for x in range(self.avgSampleSize)]
 
         self.bt_signal = bt_signal
@@ -70,7 +70,7 @@ class Ultrasonic(threading.Thread):
     def isValid(self, cur_value, prev):
 
         df = abs(cur_value - self.get_running_average())
-
+        self.logger.info("RUNNING AVG ->" + str(self.get_running_average()))
         self.logger.info("distance diff ->" + str(df))
 
         return df < 30 and cur_value < 300
@@ -128,23 +128,23 @@ class Ultrasonic(threading.Thread):
         # Wait 10us
         time.sleep(0.00001)
         GPIO.output(TRIG_Arr[sensorNum], False)
-        stop = time.time()
-        start1 = time.time()
-        
-        self.logger.info("Sending...")
-        while GPIO.input(ECHO_Arr[sensorNum])==0:
-            stop = time.time()
-            if stop - start1 > 0.5:
-                self.logger.info("Sending TimeOut")
-                return 99999
 
         start = time.time()
-        self.logger.info("Receiving...")
-        while GPIO.input(ECHO_Arr[sensorNum])==1:
-            stop = time.time()
-            if stop - start > 0.5:
-                self.logger.info("Receiving TimeOut")
-                return 99999
+        stop = time
+        
+      	while GPIO.input(ECHO_Arr[sensorNum])==0:
+      	  stop = time.time()
+          start2 = stop
+          if stop - start > 1:
+            self.logger.info("Sending TimeOut")
+            return 99999
+            
+        start2 = stop
+      	while GPIO.input(ECHO_Arr[sensorNum])==1:
+      	  stop = time.time()
+          if stop - start2 > 1:
+            self.logger.info("Sending TimeOut")
+            return 99999
 
         # Calculate pulse length
         elapsed = stop-start
