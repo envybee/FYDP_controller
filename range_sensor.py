@@ -65,6 +65,7 @@ class Ultrasonic(threading.Thread):
             count += 1
 
             distance = self.getRangeFromSensor(0)
+            time.sleep(0.1)
             distance2 = self.getRangeFromSensor(1)
 
             self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
@@ -102,23 +103,23 @@ class Ultrasonic(threading.Thread):
         # Wait 10us
         time.sleep(0.00001)
         GPIO.output(TRIG_Arr[sensorNum], False)
-        stop = time.time()
-        start1 = time.time()
-        
-        self.logger.info("Sending...")
-        while GPIO.input(ECHO_Arr[sensorNum])==0:
-            stop = time.time()
-            if stop - start1 > 1:
-                self.logger.info("Sending TimeOut")
-                return 99999
-
         start = time.time()
-        self.logger.info("Receiving...")
-        while GPIO.input(ECHO_Arr[sensorNum])==1:
-            stop = time.time()
-            if stop - start > 1:
-                self.logger.info("Receiving TimeOut")
-                return 99999
+        stop = time
+        
+      	while GPIO.input(ECHO_Arr[sensorNum])==0:
+      	  stop = time.time()
+          start2 = stop
+          if stop - start > 1:
+            self.logger.info("Sending TimeOut")
+            return 99999
+            
+        start2 = stop
+      	while GPIO.input(ECHO_Arr[sensorNum])==1:
+      	  stop = time.time()
+          if stop - start2 > 1:
+            self.logger.info("Sending TimeOut")
+            return 99999
+           
 
         # Calculate pulse length
         elapsed = stop-start
