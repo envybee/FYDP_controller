@@ -15,7 +15,7 @@ from time import sleep
 
 def sigint_handler(signum, frame):
     cL.kill_received = True
-    #vision.kill_received = True
+    vision.kill_received = True
     ultrasonic.kill_received = True
     #bt_interface.kill_received = True
 
@@ -31,7 +31,7 @@ if __name__ == "__main__":
     med_value = [0]
     lat_value = [0]
 
-    bt_signal = [True]
+    bt_signal = [False]
 
     # Initialize threads
     #bt_interface = Bluetooth(logger, bt_signal)
@@ -54,6 +54,7 @@ if __name__ == "__main__":
     #bt_interface.start()
     cL.start()
     # inputs.start()
+
     vision.start()
     ultrasonic.start()
 

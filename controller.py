@@ -106,28 +106,30 @@ class ControllerLoop(threading.Thread):
         base = 1
         norm_vel = int(base*round(float(cur_velocity)/base))
         if norm_vel > 0:
-            self.mc.forwardM0(norm_vel)
+            self.mc.reverseM0(norm_vel)
             self.mc.reverseM1(norm_vel)
         else:
             norm_vel = abs(int(1.5 * norm_vel))
-            self.mc.reverseM0(norm_vel)
+            self.mc.forwardM0(norm_vel)
             self.mc.forwardM1(norm_vel)
 
         self.logger.debug("Tuned & normalized velocity  " + str(cur_velocity))
 
     def set_lateral_velocity(self, cur_velocity):
-
+        if cur_velocity > 30 or cur_velocity > -30:
+          cur_velocity = 0
+          
         self.logger.debug("Lateral Drive!!!   --->" + str(cur_velocity))
         norm_vel = int(cur_velocity)
         if cur_velocity > 0:
             for s in range(10, 15):
                 self.mc.reverseM0(15 + norm_vel)
-                self.mc.reverseM1(15)
+                self.mc.forwardM1(15)
         else:
             for s in range(10, 15):
                 norm_vel = abs(int(cur_velocity))
                 self.mc.forwardM0(15)
-                self.mc.forwardM1(15 + norm_vel)
+                self.mc.reverseM1(15 + norm_vel)
 
     def medial_drive(self):
         self.logger.info("Received med_value: " + str(self.med_value))
@@ -139,7 +141,22 @@ class ControllerLoop(threading.Thread):
         self.logger.info("cur_velocity: " + str(cur_velocity))
 
         self.input_filter.cur_vel = cur_velocity
-        self.set_velocity(cur_velocity)
+        if cur_velocity > 0 and cur_velocity < 100:
+              self.set_velocity(60)
+        elif cur_velocity > 100 and cur_velocity < 200:
+            for s in range(100, cur_velocity, 10): 
+              self.set_velocity(s)
+        elif cur_velocity > 100 and cur_velocity < 200:
+            for s in range(100, cur_velocity, 20): 
+              self.set_velocity(s)
+        elif cur_velocity < 0 and cur_velocity > -15:
+            for s in range(0, -60, -20): 
+              self.set_velocity(s)
+        elif cur_velocity < -15 and cur_velocity > -200:
+            for s in range(0, -50, -30): 
+              self.set_velocity(s)
+        else:
+            self.set_velocity(0)
 
     def lateral_drive(self):
         error = self.lat_value[0]
