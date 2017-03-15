@@ -14,7 +14,7 @@ class Ultrasonic(threading.Thread):
     def __init__(self, threadID, med_data_value, logger, bt_signal):
         threading.Thread.__init__(self)
         self.threadID = threadID
-        self.window_size = 10
+        self.window_size = 5
         #self.distanceValues = [0 for x in range(self.avgSampleSize)]
 
         self.bt_signal = bt_signal
@@ -70,7 +70,7 @@ class Ultrasonic(threading.Thread):
     def isValid(self, cur_value, prev):
 
         df = abs(cur_value - self.get_running_average())
-
+        self.logger.info("RUNNING AVG ->" + str(self.get_running_average()))
         self.logger.info("distance diff ->" + str(df))
 
         return df < 30 and cur_value < 300
