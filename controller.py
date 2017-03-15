@@ -23,7 +23,7 @@ class InputFilter:
 
     def medial_filter(self, target_vel = None):
         pid_value = self.pid(target_vel)
-        self.logger.info("PID Output: " + str(pid_value))
+        #self.logger.info("PID Output: " + str(pid_value))
 
         if target_vel is None:
             return 0
@@ -140,9 +140,9 @@ class ControllerLoop(threading.Thread):
 
         self.input_filter.cur_vel = cur_velocity
         if cur_velocity > 0 and cur_velocity < 100: 
-              self.set_velocity(50)
+              self.set_velocity(55)
         elif cur_velocity > 100 and cur_velocity < 200:
-            self.set_velocity(55)
+            self.set_velocity(60)
         elif cur_velocity > 100 and cur_velocity < 200:
             self.set_velocity(80)
         elif cur_velocity < 0 and cur_velocity > -50:
@@ -172,7 +172,7 @@ class ControllerLoop(threading.Thread):
 
     def turn_right(self, lat_val):
         
-        self.mc.reverseM0(37)
+        self.mc.reverseM0(33)
         self.mc.reverseM1(0)
         self.logger.info(str(round(1.7 * lat_val, 1)))        
         sleep(round(1.5 * lat_val, 1))
@@ -181,7 +181,7 @@ class ControllerLoop(threading.Thread):
 
     def turn_left(self, lat_val):
         self.mc.reverseM0(0)
-        self.mc.reverseM1(37)
+        self.mc.reverseM1(33)
         self.logger.info(str(round(1.5 * abs(lat_val), 1)))
         sleep(round(1.5 * abs(lat_val), 1))
         self.stop()

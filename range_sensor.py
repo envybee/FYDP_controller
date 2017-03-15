@@ -61,8 +61,28 @@ class Ultrasonic(threading.Thread):
         count = 0
         prev = 0
         skippedCount = 0
+        initVals = []
+        
         while self.lat_value[0] is 0:
           pass
+          
+        while count < 11:
+            #ind = count % self.avgSampleSize
+            count += 1
+
+            distance = self.getRangeFromSensor(0)
+            time.sleep(0.1)
+            distance2 = self.getRangeFromSensor(1)
+            
+            self.logger.info(str(initVals))
+
+            distToSend = int(min(distance, distance2))
+            
+            initVals.append(distToSend)
+
+        initVals = sorted(initVals)    
+        prev = initVals[5]
+              
           
         while not self.kill_received:
             #ind = count % self.avgSampleSize
@@ -71,10 +91,12 @@ class Ultrasonic(threading.Thread):
             distance = self.getRangeFromSensor(0)
             time.sleep(0.1)
             distance2 = self.getRangeFromSensor(1)
-
-            self.logger.debug("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
+            
+            self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
 
             distToSend = int(min(distance, distance2))
+              
+              
             self.logger.info("Medial Value --> " + str(distToSend))
             if prev == 0:
                 prev = distToSend
@@ -83,7 +105,7 @@ class Ultrasonic(threading.Thread):
             if not self.isValid(distToSend, prev):
                 self.logger.info("--SKIPPED--")
                 skippedCount += 1
-                if skippedCount > 5:
+                if skippedCount > 3:
                   self.med_data_value[0] = 0
                   time.sleep(0.05)
             
