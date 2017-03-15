@@ -11,12 +11,12 @@ TRIG_Arr = [23, 16]
 ECHO_Arr = [24, 20]
 
 class Ultrasonic(threading.Thread):
-    def __init__(self, threadID, med_data_value, logger, bt_signal):
+    def __init__(self, threadID, med_data_value, logger, bt_signal, lat_value):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.avgSampleSize = 25
         #self.distanceValues = [0 for x in range(self.avgSampleSize)]
-
+        self.lat_value = lat_value
         self.bt_signal = bt_signal
 
         GPIO.setmode(GPIO.BCM)
@@ -35,11 +35,9 @@ class Ultrasonic(threading.Thread):
         for TRIG in TRIG_Arr:
             GPIO.output(TRIG, False)
 
-        logger.debug("Waiting For Sensor To Settle")
-        
-        time.sleep(4)
+        logger.debug("Waiting Detection...")
 
-        self.reference_distance = 70
+        self.reference_distance = 100
 
         self.kill_received = False
 
@@ -55,13 +53,17 @@ class Ultrasonic(threading.Thread):
 
         df = abs(cur_value - prev)
 
-        self.logger.debug("distance diff ->" + str(df))
+        self.logger.info("distance diff ->" + str(df))
 
-        return df < 30 and cur_value < 300
+        return df < 40 and cur_value < 300
 
     def run(self):
         count = 0
         prev = 0
+        skippedCount = 0
+        while self.lat_value[0] is 0:
+          pass
+          
         while not self.kill_received:
             #ind = count % self.avgSampleSize
             count += 1
@@ -73,17 +75,24 @@ class Ultrasonic(threading.Thread):
             self.logger.debug("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
 
             distToSend = int(min(distance, distance2))
-
+            self.logger.info("Medial Value --> " + str(distToSend))
             if prev == 0:
                 prev = distToSend
                 continue
 
             if not self.isValid(distToSend, prev):
-                self.logger.info("--SKIPPED--")    
+                self.logger.info("--SKIPPED--")
+                skippedCount += 1
+                if skippedCount > 5:
+                  self.med_data_value[0] = 0
+                  time.sleep(0.05)
+            
                 continue
+                
+            skippedCount = 0
 
             #distToSend = self.running_mean()
-            self.logger.debug("Medial Value --> " + str(distToSend))
+            
 
             self.med_data_value[0] = distToSend - self.reference_distance
             #self.distanceValues[ind] = distToSend
@@ -106,7 +115,7 @@ class Ultrasonic(threading.Thread):
         time.sleep(0.00001)
         GPIO.output(TRIG_Arr[sensorNum], False)
         start = time.time()
-        stop = time
+        stop = time.time()
         
       	while GPIO.input(ECHO_Arr[sensorNum])==0:
       	  stop = time.time()

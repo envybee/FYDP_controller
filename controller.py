@@ -19,16 +19,16 @@ class InputFilter:
 
         self.deltaT = 0.1
 
-        self.output_threshold = 10
+        self.output_threshold = 20
 
     def medial_filter(self, target_vel = None):
         pid_value = self.pid(target_vel)
-        self.logger.info("PID output: " + str(pid_value))
+        self.logger.info("PID Output: " + str(pid_value))
 
         if target_vel is None:
             return 0
 
-        return self.check_thresholds(pid_value)
+        return self.check_thresholds(target_vel)
 
     def lateral_filter(self, target_vel):
         return self.check_thresholds(target_vel)
@@ -130,25 +130,25 @@ class ControllerLoop(threading.Thread):
                 self.mc.reverseM1(15 + norm_vel)
 
     def medial_drive(self):
-        self.logger.info("Received med_value: " + str(self.med_value))
+        self.logger.debug("Received med_value: " + str(self.med_value))
         error = self.med_value[0]
 
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.medial_filter(cur_velocity)
 
-        self.logger.debug("cur_velocity: " + str(cur_velocity))
+        self.logger.info("cur_velocity: " + str(cur_velocity))
 
         self.input_filter.cur_vel = cur_velocity
         if cur_velocity > 0 and cur_velocity < 100: 
-              self.set_velocity(60)
+              self.set_velocity(50)
         elif cur_velocity > 100 and cur_velocity < 200:
-            self.set_velocity(70)
+            self.set_velocity(55)
         elif cur_velocity > 100 and cur_velocity < 200:
             self.set_velocity(80)
-        elif cur_velocity < 0 and cur_velocity > -15:
+        elif cur_velocity < 0 and cur_velocity > -50:
             for s in range(0, -60, -20): 
               self.set_velocity(s)
-        elif cur_velocity < -15 and cur_velocity > -200:
+        elif cur_velocity < -50 and cur_velocity > -200:
             for s in range(0, -50, -30): 
               self.set_velocity(s)
         else:
@@ -172,16 +172,16 @@ class ControllerLoop(threading.Thread):
 
     def turn_right(self, lat_val):
         
-        self.mc.reverseM0(50)
-        self.mc.reverseM1(30)
-        self.logger.info(str(round(1.5 * lat_val, 1)))        
+        self.mc.reverseM0(37)
+        self.mc.reverseM1(0)
+        self.logger.info(str(round(1.7 * lat_val, 1)))        
         sleep(round(1.5 * lat_val, 1))
         self.stop()
         sleep(0.5)
 
     def turn_left(self, lat_val):
-        self.mc.reverseM0(30)
-        self.mc.reverseM1(50)
+        self.mc.reverseM0(0)
+        self.mc.reverseM1(37)
         self.logger.info(str(round(1.5 * abs(lat_val), 1)))
         sleep(round(1.5 * abs(lat_val), 1))
         self.stop()
