@@ -83,7 +83,7 @@ class ControllerLoop(threading.Thread):
 
     def run(self):
         while not self.kill_received and self.bt_signal[0]:
-
+            self.logger.info("Lateral velocity: " + str(self.lat_value[0]))
             if self.lat_value[0] == 0:
                 self.medial_drive()
             else:
