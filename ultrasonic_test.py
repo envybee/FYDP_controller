@@ -70,7 +70,7 @@ while True:
 
 	print("Distance : {0:5.1f}".format(distance))
 
-	time.sleep(0.8)
+	time.sleep(0.15)
 
 
 # Reset GPIO settings

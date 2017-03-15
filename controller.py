@@ -19,7 +19,7 @@ class InputFilter:
 
         self.deltaT = 0.1
 
-        self.output_threshold = 20
+        self.output_threshold = 30
 
     def medial_filter(self, target_vel = None):
         pid_value = self.pid(target_vel)
@@ -153,6 +153,10 @@ class ControllerLoop(threading.Thread):
               self.set_velocity(s)
         else:
             self.set_velocity(0)
+            
+        #sleep(0.3)
+        
+        #self.set_velocity(0)
 
     def lateral_drive(self):
         val = self.lat_value[0]
@@ -172,17 +176,17 @@ class ControllerLoop(threading.Thread):
 
     def turn_right(self, lat_val):
         
-        self.mc.reverseM0(33)
+        self.mc.reverseM0(37)
         self.mc.reverseM1(0)
-        self.logger.info(str(round(1.7 * lat_val, 1)))        
+        self.logger.info(str(round(1.6 * lat_val, 1)))        
         sleep(round(1.5 * lat_val, 1))
         self.stop()
         sleep(0.5)
 
     def turn_left(self, lat_val):
         self.mc.reverseM0(0)
-        self.mc.reverseM1(33)
-        self.logger.info(str(round(1.5 * abs(lat_val), 1)))
+        self.mc.reverseM1(37)
+        self.logger.info(str(round(1.6 * abs(lat_val), 1)))
         sleep(round(1.5 * abs(lat_val), 1))
         self.stop()
         sleep(0.5)

@@ -37,7 +37,7 @@ class Ultrasonic(threading.Thread):
 
         logger.debug("Waiting Detection...")
 
-        self.reference_distance = 100
+        self.reference_distance = 125
 
         self.kill_received = False
 
@@ -49,60 +49,35 @@ class Ultrasonic(threading.Thread):
         return int(sma[len(sma) - 1])'''
 
 
-    def isValid(self, cur_value, prev):
+    def isValid(self, cur_value):#, prev):
 
-        df = abs(cur_value - prev)
+        #df = abs(cur_value - prev)
 
-        self.logger.info("distance diff ->" + str(df))
+        #self.logger.info("distance diff ->" + str(df))
 
-        return df < 40 and cur_value < 300
+        return cur_value < 300# and df < 40
 
     def run(self):
-        count = 0
-        prev = 0
+        prev = 1
         skippedCount = 0
         initVals = []
         
         while self.lat_value[0] is 0:
           pass
-          
-        while count < 11:
-            #ind = count % self.avgSampleSize
-            count += 1
-
-            distance = self.getRangeFromSensor(0)
-            time.sleep(0.1)
-            distance2 = self.getRangeFromSensor(1)
-            
-            self.logger.info(str(initVals))
-
-            distToSend = int(min(distance, distance2))
-            
-            initVals.append(distToSend)
-
-        initVals = sorted(initVals)    
-        prev = initVals[5]
+        
+        #prev = self.getMedianVal(11)
               
           
         while not self.kill_received:
             #ind = count % self.avgSampleSize
-            count += 1
-
-            distance = self.getRangeFromSensor(0)
-            time.sleep(0.1)
-            distance2 = self.getRangeFromSensor(1)
-            
-            self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
-
-            distToSend = int(min(distance, distance2))
               
-              
+            distToSend = self.getMedianVal(4)
             self.logger.info("Medial Value --> " + str(distToSend))
             if prev == 0:
                 prev = distToSend
                 continue
 
-            if not self.isValid(distToSend, prev):
+            if not self.isValid(distToSend):#, prev):
                 self.logger.info("--SKIPPED--")
                 skippedCount += 1
                 if skippedCount > 3:
@@ -121,9 +96,34 @@ class Ultrasonic(threading.Thread):
 
             time.sleep(0.05)
 
-            prev = distToSend
+            #prev = distToSend
 
         GPIO.cleanup()
+        
+    def getMedianVal(self, tries):
+        count = 0
+        medianVal = 0
+        vals = []
+          
+        while count < tries:
+            #ind = count % self.avgSampleSize
+            count += 1
+
+            distance = self.getRangeFromSensor(0)
+            time.sleep(0.1)
+            distance2 = self.getRangeFromSensor(1)
+            
+            self.logger.info(str(vals))
+
+            distToSend = int(min(distance, distance2))
+            
+            vals.append(distToSend)
+
+        vals = sorted(vals)    
+        medianVal = vals[int(tries/2)]
+
+        return medianVal
+    
 
     def getRangeFromSensor(self, sensorNum):
         
