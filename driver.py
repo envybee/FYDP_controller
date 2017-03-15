@@ -15,7 +15,7 @@ from time import sleep
 
 def sigint_handler(signum, frame):
     cL.kill_received = True
-    #vision.kill_received = True
+    vision.kill_received = True
     ultrasonic.kill_received = True
     #bt_interface.kill_received = True
 
@@ -31,14 +31,14 @@ if __name__ == "__main__":
     med_value = [0]
     lat_value = [0]
 
-    bt_signal = [True]
+    bt_signal = [False]
 
     # Initialize threads
     #bt_interface = Bluetooth(logger, bt_signal)
     ultrasonic = Ultrasonic(3, med_value, logger, bt_signal)
     cL = ControllerLoop(1, med_value, lat_value, logger, bt_signal)
     # inputs = Inputs(2, med_value, lat_value, logger)
-    #vision = Vision_Subsystem(1, lat_value, logger, False)
+    vision = Vision_Subsystem(1, lat_value, logger, False)
 
     # Cleanup on Ctrl+C
     signal.signal(signal.SIGINT, sigint_handler)
@@ -46,15 +46,15 @@ if __name__ == "__main__":
     # Set threads to run in daemon mode so they can be killed
     cL.daemon = True
     # inputs.daemon = True
-    #vision.daemon = True
+    vision.daemon = True
     ultrasonic.daemon = True
     #bt_interface.daemon = True
 
     # Start all the threads
     #bt_interface.start()
     cL.start()
-    # inputs.start()
-    #vision.start()
+    #inputs.start()
+    vision.start()
     ultrasonic.start()
 
     while threading.activeCount() > 0:
