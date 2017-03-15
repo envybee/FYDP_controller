@@ -84,7 +84,7 @@ class ControllerLoop(threading.Thread):
     def run(self):
         while not self.kill_received and self.bt_signal[0]:
 
-            if self.lat_value[0] == 0 :
+            if -0.1 < self.lat_value[0] < 0.1:
                 self.medial_drive()
             else:
                 self.lateral_drive()
@@ -116,8 +116,6 @@ class ControllerLoop(threading.Thread):
         self.logger.debug("Tuned & normalized velocity  " + str(cur_velocity))
 
     def set_lateral_velocity(self, cur_velocity):
-        if cur_velocity > 30 or cur_velocity > -30:
-          cur_velocity = 0
           
         self.logger.debug("Lateral Drive!!!   --->" + str(cur_velocity))
         norm_vel = int(cur_velocity)
@@ -138,17 +136,15 @@ class ControllerLoop(threading.Thread):
         cur_velocity = self.input_filter.error2vel(error)
         cur_velocity = self.input_filter.medial_filter(cur_velocity)
 
-        self.logger.info("cur_velocity: " + str(cur_velocity))
+        self.logger.debug("cur_velocity: " + str(cur_velocity))
 
         self.input_filter.cur_vel = cur_velocity
         if cur_velocity > 0 and cur_velocity < 100: 
               self.set_velocity(60)
         elif cur_velocity > 100 and cur_velocity < 200:
-            for s in range(100, cur_velocity, 10): 
-              self.set_velocity(s)
+            self.set_velocity(70)
         elif cur_velocity > 100 and cur_velocity < 200:
-            for s in range(100, cur_velocity, 20): 
-              self.set_velocity(s)
+            self.set_velocity(80)
         elif cur_velocity < 0 and cur_velocity > -15:
             for s in range(0, -60, -20): 
               self.set_velocity(s)
@@ -159,12 +155,35 @@ class ControllerLoop(threading.Thread):
             self.set_velocity(0)
 
     def lateral_drive(self):
-        error = self.lat_value[0]
+        val = self.lat_value[0]
+        if val > 0:
+          self.turn_right(val)
+        else:
+          self.turn_left(val)
+        
+        self.logger.info("Received lat_value: " + str(val))
+        #cur_velocity = self.input_filter.error2vel_vision(error)
+        #cur_velocity = self.input_filter.lateral_filter(cur_velocity)
 
-        self.logger.debug("Received lat_value: " + str(error))
-        cur_velocity = self.input_filter.error2vel_vision(error)
-        cur_velocity = self.input_filter.lateral_filter(cur_velocity)
+        #self.set_lateral_velocity(cur_velocity)
+    
+    def roundTo(self, val, base):
+      return int(base*round(float(val)/base))
 
-        self.set_lateral_velocity(cur_velocity)
+    def turn_right(self, lat_val):
+        
+        self.mc.reverseM0(50)
+        self.mc.reverseM1(30)
+        self.logger.info(str(round(1.5 * lat_val, 1)))        
+        sleep(round(1.5 * lat_val, 1))
+        self.stop()
+        sleep(0.5)
 
+    def turn_left(self, lat_val):
+        self.mc.reverseM0(30)
+        self.mc.reverseM1(50)
+        self.logger.info(str(round(1.5 * abs(lat_val), 1)))
+        sleep(round(1.5 * abs(lat_val), 1))
+        self.stop()
+        sleep(0.5)
 

@@ -24,7 +24,7 @@ class Ultrasonic(threading.Thread):
         self.med_data_value = med_data_value
         self.logger = logger
 
-        logger.info("Distance Measurement In Progress")
+        logger.debug("Distance Measurement In Progress")
 
         for TRIG in TRIG_Arr:
             GPIO.setup(TRIG, GPIO.OUT)
@@ -35,7 +35,9 @@ class Ultrasonic(threading.Thread):
         for TRIG in TRIG_Arr:
             GPIO.output(TRIG, False)
 
-        logger.info("Waiting For Sensor To Settle")
+        logger.debug("Waiting For Sensor To Settle")
+        
+        time.sleep(4)
 
         self.reference_distance = 70
 
@@ -53,7 +55,7 @@ class Ultrasonic(threading.Thread):
 
         df = abs(cur_value - prev)
 
-        self.logger.info("distance diff ->" + str(df))
+        self.logger.debug("distance diff ->" + str(df))
 
         return df < 30 and cur_value < 300
 
@@ -68,7 +70,7 @@ class Ultrasonic(threading.Thread):
             time.sleep(0.1)
             distance2 = self.getRangeFromSensor(1)
 
-            self.logger.info("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
+            self.logger.debug("Sensor " + str(2) + " Iteration: " + str(count) + "Distance : {0:5.1f}".format(distance2))
 
             distToSend = int(min(distance, distance2))
 
@@ -81,7 +83,7 @@ class Ultrasonic(threading.Thread):
                 continue
 
             #distToSend = self.running_mean()
-            self.logger.info("Medial Value --> " + str(distToSend))
+            self.logger.debug("Medial Value --> " + str(distToSend))
 
             self.med_data_value[0] = distToSend - self.reference_distance
             #self.distanceValues[ind] = distToSend
@@ -110,14 +112,14 @@ class Ultrasonic(threading.Thread):
       	  stop = time.time()
           start2 = stop
           if stop - start > 1:
-            self.logger.info("Sending TimeOut")
+            self.logger.debug("Sending TimeOut")
             return 99999
             
         start2 = stop
       	while GPIO.input(ECHO_Arr[sensorNum])==1:
       	  stop = time.time()
           if stop - start2 > 1:
-            self.logger.info("Sending TimeOut")
+            self.logger.debug("Sending TimeOut")
             return 99999
            
 

@@ -31,7 +31,7 @@ if __name__ == "__main__":
     med_value = [0]
     lat_value = [0]
 
-    bt_signal = [False]
+    bt_signal = [True]
 
     # Initialize threads
     #bt_interface = Bluetooth(logger, bt_signal)
