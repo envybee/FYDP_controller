@@ -82,21 +82,20 @@ class ControllerLoop(threading.Thread):
         self.kill_received = False
 
     def run(self):
-        while not self.kill_received and self.bt_signal[0]:
+        while not self.kill_received:
+            while not self.kill_received and self.bt_signal[0]:
 
-            if -0.1 < self.lat_value[0] < 0.1:
-                self.medial_drive()
-            else:
-                self.lateral_drive()
+                if -0.1 < self.lat_value[0] < 0.1:
+                    self.medial_drive()
+                else:
+                    self.lateral_drive()
 
-            sleep(0.01)
+                sleep(0.01)
 
-        self.stop()
+            self.stop()
 
-        if not self.kill_received:
             self.logger.info("Paused")
             sleep(0.1)
-            self.run()
 
     def stop(self):
         self.mc.forwardM0(0)
