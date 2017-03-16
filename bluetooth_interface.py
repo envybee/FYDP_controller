@@ -3,9 +3,11 @@ import threading
 from bluetooth import *
 
 class Bluetooth(threading.Thread):
-    def __init__(self, logger, data):
+    def __init__(self, logger, data, detected):
         self.logger = logger
         self.data = data
+
+        self.detected = detected
 
         self.server_sock = BluetoothSocket(RFCOMM)
         self.server_sock.bind(("", PORT_ANY))
@@ -32,6 +34,11 @@ class Bluetooth(threading.Thread):
 
     def run(self):
         try:
+            while not self.detected[0]:
+                pass
+
+            self.client_sock.send("Detected")
+
             while not self.kill_received:
                 data = self.client_sock.recv(1024)
                 if len(data) == 0: break

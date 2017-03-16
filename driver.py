@@ -31,11 +31,13 @@ if __name__ == "__main__":
     med_value = [0]
     lat_value = [0]
 
+    detected = [False]
+
     bt_signal = [False]
 
     # Initialize threads
-    bt_interface = Bluetooth(logger, bt_signal)
-    ultrasonic = Ultrasonic(3, med_value, logger, bt_signal, lat_value)
+    bt_interface = Bluetooth(logger, bt_signal, detected)
+    ultrasonic = Ultrasonic(3, med_value, logger, bt_signal, lat_value, detected)
     cL = ControllerLoop(1, med_value, lat_value, logger, bt_signal)
     # inputs = Inputs(2, med_value, lat_value, logger)
     vision = Vision_Subsystem(1, lat_value, logger, False)

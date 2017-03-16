@@ -11,7 +11,7 @@ TRIG_Arr = [23, 16]
 ECHO_Arr = [24, 20]
 
 class Ultrasonic(threading.Thread):
-    def __init__(self, threadID, med_data_value, logger, bt_signal, lat_value):
+    def __init__(self, threadID, med_data_value, logger, bt_signal, lat_value, detected):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.avgSampleSize = 25
@@ -20,6 +20,8 @@ class Ultrasonic(threading.Thread):
         self.bt_signal = bt_signal
 
         GPIO.setmode(GPIO.BCM)
+
+        self.detected = detected
 
         self.med_data_value = med_data_value
         self.logger = logger
@@ -64,7 +66,8 @@ class Ultrasonic(threading.Thread):
         
         while self.lat_value[0] is 0:
           pass
-        
+
+        self.detected[0] = True
         #prev = self.getMedianVal(11)
               
           
